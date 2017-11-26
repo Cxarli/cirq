@@ -50,7 +50,7 @@ fn main() {
 
         circuit.connect(&connection);
     }
-    
+
 
     let inputs = circuit.get_inputs();
 
