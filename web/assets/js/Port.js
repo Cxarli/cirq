@@ -2,9 +2,10 @@ window._ports = {};
 
 function Port(gate, name, width) {
   this.name = name;
+  this.nameset = false;
   this.gate = gate;
   this.uuid = gate.uuid + ':' + name;
-  this.type = (name.charAt(0) == 'I' ? 'in' : 'out');
+  this.type = (name.charAt(0) == 'I' ? 'IN' : 'OUT');
   this.id = parseInt(name.substring(1));
 
   this.width = width;
@@ -51,6 +52,8 @@ Port.prototype.getElement = function() {
 
   portElem.innerHTML = this.name;
 
+  portElem.addEventListener('click', this.click.bind(this));
+
   this.portElem = portElem;
   return portElem;
 };
@@ -89,5 +92,46 @@ Port.prototype.destroy = function() {
     });
   }
 };
+
+
+Port.prototype.setName = function(name) {
+  let olduuid = this.uuid;
+
+  // Store name
+  this.name = name;
+  this.uuid = this.gate.uuid + ':' + name;
+  this.nameset = true;
+
+  // Update element
+  if (this.portElem) this.portElem.innerHTML = name;
+
+  // Update all wires
+  window._wires.forEach(wire => {
+    if (wire.a.uuid == olduuid) {
+      wire.a.uuid = this.uuid;
+    }
+    if (wire.b.uuid == olduuid) {
+      wire.b.uuid = this.uuid;
+    }
+    wire.uuid = 'wire#' + wire.a.uuid + '/' + wire.b.uuid;
+  });
+}
+
+
+Port.prototype.click = function(event) {
+  // Make sure ALT is pressed
+  if (! event.altKey) {
+    return;
+  }
+
+  // Get name
+  let name = prompt("Enter name for port");
+  if (! name) {
+    return;
+  }
+
+  this.setName(name);
+}
+
 
 define(() => Port);

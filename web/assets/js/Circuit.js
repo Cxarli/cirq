@@ -12,8 +12,8 @@ Circuit.prototype.generateJSON = function() {
     wires: [],
   };
 
-  LOOP_OBJ(this.gates).forEach((name, gate) => {
-    output.gates[gate.uuid] = {
+  LOOP_OBJ(this.gates).forEach((uuid, gate) => {
+    output.gates[uuid] = {
       type: gate.type,
     };
   });

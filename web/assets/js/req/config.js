@@ -6,12 +6,12 @@ require.config({
       deps: [ ]
     },
 
-    Template: {
+    CustomGate: {
       deps: [ ],
     },
 
-    CustomGate: {
-      deps: [ ],
+    Template: {
+      deps: [ 'utils' ],
     },
 
     Circuit: {
@@ -19,19 +19,19 @@ require.config({
       exports: 'Circuit',
     },
 
+    Wire: {
+      deps: [ 'utils' ],
+      exports: 'Wire',
+    },
+
     Port: {
-      deps: [ ],
+      deps: [ 'Wire' ],
       exports: 'Port',
     },
 
     Gate: {
       deps: [ 'Port', 'utils' ],
       exports: 'Gate',
-    },
-
-    Wire: {
-      deps: [ 'utils' ],
-      exports: 'Wire',
     },
 
     wireEvents: {

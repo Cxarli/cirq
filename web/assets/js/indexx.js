@@ -26,7 +26,30 @@ function createCustomGateFromCurrentCircuit() {
 
   let circuit = new Circuit(CLONE(window._gates), CLONE(window._wires));
 
-  let newgate = new CustomGate(type, circuit);
+  let ionames = {};
+
+  let failed = false;
+  LOOP_OBJ(window._gates).forEach((uuid, gate) => {
+    if (failed) return;
+
+    if (gate.type == 'IN' || gate.type == 'OUT') {
+      // get port
+      let port = gate.ports['I0'] || gate.ports['O0'];
+
+      // check if name is set
+      if (! port.nameset) {
+        alert("Failed to create custom gate: Not all in- and outputs have names.");
+        failed = true;
+        return;
+      }
+
+      // add port name to ionames
+      ionames[uuid] = port.name;
+    }
+  });
+  if (failed) return;
+
+  let newgate = new CustomGate(type, ionames, circuit);
   window._customGates[type] = newgate;
   console.log(newgate);
 
@@ -95,7 +118,7 @@ function generateJSON() {
   let circuit = new Circuit(window._gates, window._wires);
   let customGates = window._customGates;
 
-  customGates = LOOP_OBJ(customGates).map((name, customGate) => customGate.circuit.generateJSON());
+  customGates = LOOP_OBJ(customGates).map((name, customGate) => customGate.circuit.generateJSON()).removeLoop();
 
   return {
     circuit: circuit.generateJSON(),

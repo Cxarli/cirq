@@ -59,7 +59,7 @@ function LOOP_OBJ(obj) {
         results[k] = callback(k, v);
       }
 
-      return results;
+      return LOOP_OBJ(results);
     },
 
     filter: function(callback) {
@@ -74,7 +74,34 @@ function LOOP_OBJ(obj) {
         }
       }
 
-      return results;
+      return LOOP_OBJ(results);
+    },
+
+    keys: function() {
+      let keys = [];
+
+      LOOP_OBJ(obj).forEach((key, _) => {
+        keys.push(key);
+
+        // ignore unused warning
+        _ + 0;
+      })
+
+      return keys;
+    },
+
+    values: function() {
+      let values = [];
+
+      LOOP_OBJ(obj).forEach((_, value) => {
+        values.push(value);
+      })
+
+      return values;
+    },
+
+    removeLoop: function() {
+      return obj;
     },
 
     length: function() {

@@ -1,7 +1,8 @@
 /* globals LOOP_OBJ */
 
-function CustomGate(type, circuit) {
+function CustomGate(type, ionames, circuit) {
   this.type = type;
+  this.ionames = ionames;
   this.circuit = circuit;
 }
 

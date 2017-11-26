@@ -1,4 +1,4 @@
-/* global Gate, redrawAllWires */
+/* global Gate, redrawAllWires, LOOP_OBJ */
 
 let dragged = null;
 
@@ -74,6 +74,24 @@ function drop(event) {
 
     if (dragged.classList.contains('gate-custom')) {
       gate.setBgColor(dragged.style.backgroundColor);
+
+      // Rename ports to the names of the custom gate ports
+      let customGate = window._customGates[type];
+      let ionames = customGate.ionames;
+      let ins = LOOP_OBJ(customGate.circuit.gates).filter((uuid, gate) => gate.type == 'IN').values();
+      let outs = LOOP_OBJ(customGate.circuit.gates).filter((uuid, gate) => gate.type == 'OUT').values();
+
+      LOOP_OBJ(gate.ports).forEach((name, port) => {
+        if (port.type == 'IN') {
+          port.setName(ionames[ins.pop().uuid]);
+        }
+        else if (port.type == 'OUT') {
+          port.setName(ionames[outs.pop().uuid]);
+        }
+        else {
+          console.error("Ehm, help? port.type ==", port.type);
+        }
+      });
     }
   }
   else {

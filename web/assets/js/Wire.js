@@ -6,7 +6,7 @@ function Wire(a, b) {
   this.a = a;
   this.b = b;
 
-  this.uuid = '#wire' + a.uuid + '/' + b.uuid;
+  this.uuid = 'wire#' + a.uuid + '/' + b.uuid;
 
   window._wires.push(this);
 }
