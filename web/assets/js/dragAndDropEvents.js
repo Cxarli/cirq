@@ -49,7 +49,19 @@ function drop(event) {
 
   // If element is dropped in the trash
   if (event.target.classList.contains('trash')) {
-    window._gates[dragged.uuid].destroy();
+    if (dragged.classList.contains('gate-custom') && dragged.dataset.clone == "true") {
+      // Custom gate in the toolbox
+      let type = dragged.dataset.type;
+      if (confirm("Delete " + type + " ?")) {
+        dragged.parentNode.removeChild(dragged);
+        dragged = null;
+        delete window._customGates[type];
+        return;
+      }
+    }
+
+    let gate = window._gates[dragged.uuid];
+    if (gate) gate.destroy();
     return;
   }
 
