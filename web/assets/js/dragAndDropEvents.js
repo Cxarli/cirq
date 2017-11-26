@@ -7,7 +7,11 @@ function dragstart(event) {
   // element is picked up
   dragged = event.target;
 
-  if (! dragged.draggable) {
+  if (dragged.draggable) {
+    // Otherwise Firefox won't drag this object
+    event.dataTransfer.setData('text/plain', 'Yes, I am dragging');
+  }
+  else {
     event.preventDefault();
   }
 }
