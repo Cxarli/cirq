@@ -11,7 +11,6 @@ CustomGate.prototype.in = function() {
 
   LOOP_OBJ(this.circuit.gates).forEach((name, gate) => {
     if (gate.type == 'IN') _in++;
-    else if (gate.type == '8IN') _in += 8;
   });
 
   return _in;
@@ -23,7 +22,6 @@ CustomGate.prototype.out = function() {
 
   LOOP_OBJ(this.circuit.gates).forEach((name, gate) => {
     if (gate.type == 'OUT') _out++;
-    else if (gate.type == '8OUT') _out += 8;
   });
 
   return _out;
