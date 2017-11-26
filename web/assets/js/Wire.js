@@ -20,10 +20,19 @@ Wire.prototype.getElement = function() {
   wireElem.uuid = this.uuid;
   wireElem.className = 'wire';
 
+  wireElem.addEventListener('click', this.clicked.bind(this));
+
   this.applyElement(wireElem);
 
   this.elem = wireElem;
   return wireElem;
+};
+
+
+Wire.prototype.clicked = function(event) {
+  if (event.ctrlKey) {
+    this.destroy();
+  }
 };
 
 
@@ -42,11 +51,16 @@ Wire.prototype.applyElement = function(wireElem) {
       bx = this.b.x,
       by = this.b.y;
 
+  if (isNaN(ax + ay + bx + by)) {
+    console.error("Failed to create wire: invalid coordinates", ax, ay, bx, by);
+    return;
+  }
+
   // Convert top left to center coordinates
-  ax += window.GATE_WIDTH / 2;
-  ay += window.GATE_WIDTH / 2;
-  bx += window.GATE_WIDTH / 2;
-  by += window.GATE_WIDTH / 2;
+  ax += this.a.port_width / 2;
+  ay += this.a.port_width / 2;
+  bx += this.b.port_width / 2;
+  by += this.b.port_width / 2;
 
 
   // Calculate length

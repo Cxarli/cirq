@@ -66,6 +66,20 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
 }
 
+#circuit .gate .port {
+  position: fixed;
+}
+
+#circuit .gate .port.port-in {
+  background-color: #fff;
+  color: #000;
+}
+
+#circuit .gate .port.port-out {
+  background-color: #000;
+  color: #fff;
+}
+
 #circuit .wire {
   width: 0;
   position: fixed;

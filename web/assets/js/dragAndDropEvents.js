@@ -58,7 +58,7 @@ function drop(event) {
   if (dragged.dataset.clone == "true") {
     // Clone old gate
     let type = dragged.dataset.type;
-    gate = new Gate(type);
+    gate = new Gate(type, parseInt(dragged.dataset.in), parseInt(dragged.dataset.out));
 
     if (dragged.classList.contains('gate-custom')) {
       gate.setBgColor(dragged.style.backgroundColor);

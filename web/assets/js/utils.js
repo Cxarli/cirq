@@ -1,5 +1,6 @@
 window.GATE_WIDTH = 75;
 window.WIRE_WIDTH = 4;
+window.GATE_BORDER = 3;
 
 
 // Based on https://stackoverflow.com/a/105074/4141219
@@ -102,7 +103,7 @@ function CLONE(o) {
     if (index !== -1) return cachedResults[index];
     references.push(obj);
 
-    // obj.constructor ? new obj.constructor() : 
+    // obj.constructor ? new obj.constructor() :
     let result = Array.isArray(obj) ? [] : {};
     cachedResults.push(result);
 

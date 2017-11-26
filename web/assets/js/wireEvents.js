@@ -17,6 +17,10 @@ function mouseup(event) {
   secondTarget = event.target;
 
   createWire();
+
+  // Reset values
+  firstTarget = null;
+  secondTarget = null;
 }
 
 
@@ -36,7 +40,9 @@ function createWire() {
 
 
 function isValidTarget(target) {
-  return target.classList.contains('gate') && target.dataset.clone != "true";
+  console.log(target);
+
+  return target.classList.contains('port');
 }
 
 
