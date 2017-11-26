@@ -116,12 +116,3 @@ h1, h2, h3, h4, h5, h6 {
 .gate.gate-OUT {
   background-color: #000;
 }
-
-.gate.gate-8IN {
-  color: #000;
-  background-color: lightgrey;
-}
-
-.gate.gate-8OUT {
-  background-color: darkgray;
-}
