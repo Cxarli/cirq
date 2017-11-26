@@ -5,6 +5,7 @@ html, body {
   height: 100%;
 }
 
+
 html {
   background-color: #020;
 
@@ -12,10 +13,12 @@ html {
   text-transform: uppercase;
 }
 
+
 h1, h2, h3, h4, h5, h6 {
   padding: 0;
   margin: 0;
 }
+
 
 .toolbox {
   float: left;
@@ -55,6 +58,7 @@ h1, h2, h3, h4, h5, h6 {
   cursor: move;
 }
 
+
 #circuit {
   float: left;
 
@@ -88,6 +92,7 @@ h1, h2, h3, h4, h5, h6 {
   border-left: 2px solid #CB6D51;
   border-right: 2px solid #CB6D51;
 }
+
 
 .gate {
   width: 75px;

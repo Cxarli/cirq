@@ -1,10 +1,12 @@
 /* globals Circuit, CustomGate, Template, HTMLToElem, LOOP_OBJ, CLONE */
 
+
 const GATE_INNER_TEMPLATE = new Template("{{TYPE}}<br>&nbsp; &lt; {{IN}}<br>&nbsp; &gt; {{OUT}}");
+
 const CUSTOM_GATE_TEMPLATE = new Template(
   '<div' +
     ' class="gate gate-custom gate-{{TYPE}}"'+
-    ' style="background-color: {{COLOR}}"' +
+    ' style="background-color: {{BGCOLOR}}"' +
     ' draggable="true"' +
     ' data-clone="true"' +
     ' data-type="{{TYPE}}"' +
@@ -14,6 +16,7 @@ const CUSTOM_GATE_TEMPLATE = new Template(
   '</div>'
 );
 
+
 window._customGates = [];
 
 
@@ -21,13 +24,15 @@ function createCustomGateFromCurrentCircuit() {
   let type = prompt("Type?");
   if ( type === null ) return;
 
-  let color = prompt("Color?");
-  if ( color === null ) return;
+  let bgcolor = prompt("Color?");
+  if ( bgcolor === null ) return;
 
   let circuit = new Circuit(CLONE(window._gates), CLONE(window._wires));
 
   let ionames = {};
 
+
+  // Make sure all in- and outputs have names
   let failed = false;
   LOOP_OBJ(window._gates).forEach((uuid, gate) => {
     if (failed) return;
@@ -49,17 +54,23 @@ function createCustomGateFromCurrentCircuit() {
   });
   if (failed) return;
 
+
+  // Create new gate
   let newgate = new CustomGate(type, ionames, circuit);
   window._customGates[type] = newgate;
   console.log(newgate);
 
+
+  // Create element
+  // TODO: Move logic to CustomGate.js
   let gateHTML = CUSTOM_GATE_TEMPLATE.apply({
     type: type,
-    color: color,
+    bgcolor: bgcolor,
     in: newgate.in(),
     out: newgate.out(),
   });
 
+  // Add element
   let gateElem = HTMLToElem(gateHTML);
   document.querySelector('.toolbox .box.custom').appendChild(gateElem);
 }
@@ -77,24 +88,29 @@ function addInfoToGates() {
   });
 }
 
+addInfoToGates();
+
 
 function clearCircuit() {
+  // Destroy all wires
   window._wires.forEach(wire => {
     wire.destroy();
   });
 
+  // Destroy all gates
   LOOP_OBJ(window._gates).forEach((name, gate) => {
     gate.destroy();
   });
 
 
-  // Checks that everything is gone
+  // Check that everything is gone
   let circuit = document.getElementById('circuit');
 
   if (circuit.children.length > 0) {
     console.log("circuit not empty?");
     console.log(circuit.children);
 
+    // force remove child
     circuit.children.forEach(child => circuit.removeChild(child));
   }
 
@@ -102,6 +118,7 @@ function clearCircuit() {
     console.log("_gates not empty?");
     console.log(window._gates);
 
+    // force remove gates
     window._gates = {};
   }
 
@@ -109,22 +126,25 @@ function clearCircuit() {
     console.log("_wires not empty?");
     console.log(window._wires);
 
+    // force remove wires
     window._wires = [];
   }
 }
 
 
 function generateJSON() {
-  let circuit = new Circuit(window._gates, window._wires);
-  let customGates = window._customGates;
+  // Create current circuit
+  let circuit = new Circuit(CLONE(window._gates), CLONE(window._wires));
 
-  customGates = LOOP_OBJ(customGates).map((name, customGate) => customGate.circuit.generateJSON()).removeLoop();
+  // Get custom gates
+  let customGates = window._customGates;
+  customGates = LOOP_OBJ(customGates)
+    // convert inner circuits to json
+    .map((_, customGate) => customGate.circuit.generateJSON())
+    .removeLoop();
 
   return {
     circuit: circuit.generateJSON(),
     customGates: customGates,
   };
 }
-
-
-addInfoToGates();

@@ -1,43 +1,23 @@
+/* global redrawAllWires */
+
+
 window._ports = {};
+
 
 function Port(gate, name, width) {
   this.name = name;
   this.nameset = false;
   this.gate = gate;
+
   this.uuid = gate.uuid + ':' + name;
   this.type = (name.charAt(0) == 'I' ? 'IN' : 'OUT');
+
   this.id = parseInt(name.substring(1));
 
   this.width = width;
 
   window._ports[this.uuid] = this;
-
-  this.connections = [];
 }
-
-
-Port.prototype.attachPort= function(newport) {
-  if (this.connections.contains(newport)) {
-    // Do not re-attach
-    return;
-  }
-
-  this.connections.push(newport);
-
-  newport.attachPort(this);
-};
-
-
-Port.prototype.detachPort = function(newport) {
-  if (! this.connections.contains(newport)) {
-    // Do not detach if not attached
-    return;
-  }
-
-  this.connections.remove(newport);
-
-  newport.detachPort(this);
-};
 
 
 Port.prototype.getElement = function() {
@@ -78,19 +58,19 @@ Port.prototype.destroy = function() {
   delete window._ports[this.uuid];
 
   // Remove wires which connect to this port
-  if (window._wires) {
-    let uuid = this.uuid;
+  let uuid = this.uuid;
 
-    window._wires = window._wires.filter(wire => {
-      // Check if wire connects this element
-      if (wire.a.uuid == uuid || wire.b.uuid == uuid) {
-        wire.destroy();
-        return false;
-      }
+  window._wires = window._wires.filter(wire => {
+    // Check if wire connects this element
+    if (wire.a.uuid == uuid || wire.b.uuid == uuid) {
+      wire.destroy();
+      return false;
+    }
 
-      return true;
-    });
-  }
+    return true;
+  });
+
+  redrawAllWires();
 };
 
 
@@ -110,9 +90,11 @@ Port.prototype.setName = function(name) {
     if (wire.a.uuid == olduuid) {
       wire.a.uuid = this.uuid;
     }
+
     if (wire.b.uuid == olduuid) {
       wire.b.uuid = this.uuid;
     }
+
     wire.uuid = 'wire#' + wire.a.uuid + '/' + wire.b.uuid;
   });
 }
@@ -120,16 +102,13 @@ Port.prototype.setName = function(name) {
 
 Port.prototype.click = function(event) {
   // Make sure ALT is pressed
-  if (! event.altKey) {
-    return;
-  }
+  if (! event.altKey) return;
 
   // Get name
   let name = prompt("Enter name for port");
-  if (! name) {
-    return;
-  }
+  if (! name) return;
 
+  // Set name
   this.setName(name);
 }
 

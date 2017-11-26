@@ -8,8 +8,8 @@
   </head>
   <body>
     <div class="toolbox trash">
-      <div class="box bill">
-        <h3>basic</h3>
+      <div class="box basic">
+        <h3>BASIC</h3>
         <div class="gate gate-AND" draggable="true" data-clone="true" data-type="AND" data-in="2" data-out="1">AND</div>
         <div class="gate gate-OR"  draggable="true" data-clone="true" data-type="OR"  data-in="2" data-out="1">OR</div>
         <div class="gate gate-NOT" draggable="true" data-clone="true" data-type="NOT" data-in="1" data-out="1">NOT</div>
@@ -27,7 +27,7 @@
 
       <div class="box">
         <button onclick="clearCircuit()">clear</button>
-        <button onclick="console.log(generateJSON())">json</button>
+        <button onclick="console.log(JSON.stringify(generateJSON(), null, 1))">json</button>
       </div>
     </div>
 

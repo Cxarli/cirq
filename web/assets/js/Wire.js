@@ -1,11 +1,14 @@
 /* global calculateLength, calculateRadians */
 
+
 window._wires = [];
+
 
 function Wire(a, b) {
   this.a = a;
   this.b = b;
 
+  // TODO: Check if this can be removed
   this.uuid = 'wire#' + a.uuid + '/' + b.uuid;
 
   window._wires.push(this);
@@ -13,7 +16,7 @@ function Wire(a, b) {
 
 
 Wire.prototype.getElement = function() {
-  if (this.elem) return this.elem;
+  if (this.wireElem) return this.wireElem;
 
   let wireElem = document.createElement('div');
 
@@ -22,9 +25,10 @@ Wire.prototype.getElement = function() {
 
   wireElem.addEventListener('click', this.clicked.bind(this));
 
-  this.applyElement(wireElem);
+  this.wireElem = wireElem;
 
-  this.elem = wireElem;
+  this.applyElement();
+
   return wireElem;
 };
 
@@ -36,7 +40,7 @@ Wire.prototype.clicked = function(event) {
 };
 
 
-Wire.prototype.applyElement = function(wireElem) {
+Wire.prototype.applyElement = function() {
   // a should always be left from b
   if (this.a.x > this.b.x) {
     // swap a and b
@@ -51,6 +55,7 @@ Wire.prototype.applyElement = function(wireElem) {
       bx = this.b.x,
       by = this.b.y;
 
+  // Check coordinates
   if (isNaN(ax + ay + bx + by)) {
     console.error("Failed to create wire: invalid coordinates", ax, ay, bx, by);
     return;
@@ -66,22 +71,22 @@ Wire.prototype.applyElement = function(wireElem) {
   // Calculate length
   let length = calculateLength(ax, ay, bx, by);
 
-  wireElem.style.height = length + 'px';
+  this.wireElem.style.height = length + 'px';
 
 
   // Calculate position
   let x = ax + window.WIRE_WIDTH / 2,
       y = ay + window.WIRE_WIDTH / 2;
 
-  wireElem.style.left = x + 'px';
-  wireElem.style.top = y + 'px';
+  this.wireElem.style.left = x + 'px';
+  this.wireElem.style.top = y + 'px';
 
 
   // Calculate rotation
   let rotation = calculateRadians(ax, ay, bx, by) - Math.PI / 2;
 
-  wireElem.style.transform = 'rotate(' + rotation + 'rad)';
-  wireElem.style.transformOrigin = 'top left';
+  this.wireElem.style.transform = 'rotate(' + rotation + 'rad)';
+  this.wireElem.style.transformOrigin = 'top left';
 }
 
 
@@ -91,23 +96,30 @@ Wire.prototype.draw = function(circuitElem) {
 
 
 Wire.prototype.destroy = function() {
-  this.elem.parentNode && this.elem.parentNode.removeChild(this.elem);
-  this.elem = null;
+  if (this.wireElem) this.elem.parentNode.removeChild(this.elem);
 
   // Remove from global wires list
   let uuid = this.uuid;
+  // NOTE: `delete` leaves an empty spot in the array, so filter it
   window._wires = window._wires.filter(wire => wire.uuid != uuid);
 };
 
 
 Wire.prototype.redraw = function(circuitElem) {
-  if (! this.elem) {
-    this.getElement();
-  }
+  if (! this.wireElem) this.getElement();
 
-  this.applyElement(this.elem);
+  this.applyElement();
   this.draw(circuitElem);
 };
+
+
+function redrawAllWires() {
+  let circuitElem = document.getElementById('circuit');
+
+  window._wires.forEach(wire => {
+    wire.redraw(circuitElem);
+  });
+}
 
 
 define(() => Wire);

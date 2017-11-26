@@ -1,3 +1,4 @@
+// Some values which should reflect CSS
 window.GATE_WIDTH = 75;
 window.WIRE_WIDTH = 4;
 window.GATE_BORDER = 3;
@@ -49,6 +50,7 @@ function LOOP_OBJ(obj) {
       }
     },
 
+
     map: function(callback) {
       let results = {};
 
@@ -61,6 +63,7 @@ function LOOP_OBJ(obj) {
 
       return LOOP_OBJ(results);
     },
+
 
     filter: function(callback) {
       let results = {};
@@ -77,6 +80,7 @@ function LOOP_OBJ(obj) {
       return LOOP_OBJ(results);
     },
 
+
     keys: function() {
       let keys = [];
 
@@ -90,6 +94,7 @@ function LOOP_OBJ(obj) {
       return keys;
     },
 
+
     values: function() {
       let values = [];
 
@@ -100,9 +105,11 @@ function LOOP_OBJ(obj) {
       return values;
     },
 
+
     removeLoop: function() {
       return obj;
     },
+
 
     length: function() {
       let len = 0;

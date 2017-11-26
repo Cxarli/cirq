@@ -1,45 +1,40 @@
 /* global Port, guid, LOOP_OBJ */
 
+
 window._gates = {};
 
-function Gate(type, _in, _out) {
-  this.uuid = guid();
 
+function Gate(type, _in, _out) {
   this.type = type;
   this.in = _in;
   this.out = _out;
 
+  this.uuid = guid();
+  this.ports = { };
+
   // Always 1 extra spot for the color
   let amount_ports = _in + _out + 1;
+
+  // Calculate dimensions
   this.portsPerWidth = Math.ceil(Math.sqrt(amount_ports));
   this.PORT_WIDTH = window.GATE_WIDTH / this.portsPerWidth;
 
-  this.ports = { };
-
   // Add in-ports
   for (let i=0; i < _in; i++) {
+    // Default name
     let name = 'I' + i;
     this.ports[name] = new Port(this, name, this.PORT_WIDTH);
   }
 
   // Add out-ports
   for (let i=0; i < _out; i++) {
+    // Default name
     let name = 'O' + (i + _in);
     this.ports[name] = new Port(this, name, this.PORT_WIDTH);
   }
 
   window._gates[this.uuid] = this;
 }
-
-
-Gate.prototype.attachPortToPort = function(port, newport) {
-  this.ports[port].attachPort(newport);
-};
-
-
-Gate.prototype.detachPortFromPort = function(port, newport) {
-  this.ports[port].detachPort(newport);
-};
 
 
 Gate.prototype.setBgColor = function(bgColor) {
@@ -62,7 +57,7 @@ Gate.prototype.getElement = function() {
   gateElem.dataset.clone = false;
 
 
-  // create ports
+  // Add port elements
   LOOP_OBJ(this.ports).forEach((name, port) => {
     let portElem = port.getElement();
 
@@ -92,6 +87,7 @@ Gate.prototype.setPosition = function(x, y) {
   gateElem.x = x;
   gateElem.y = y;
 
+  // Move ports
   LOOP_OBJ(this.ports).forEach((name, port) => {
     let portX = x;
     let portY = y;
@@ -105,15 +101,13 @@ Gate.prototype.setPosition = function(x, y) {
 
 
 Gate.prototype.destroy = function() {
-  if (! this.gateElem) return;
+  // Remove element
+  if (this.gateElem) this.gateElem.parentNode.removeChild(this.gateElem);
 
   // Destroy ports
   LOOP_OBJ(this.ports).forEach((name, port) => {
     port.destroy();
   });
-
-  // Remove element
-  this.gateElem.parentNode.removeChild(this.gateElem);
 
   // Remove from global gates list
   delete window._gates[this.uuid];

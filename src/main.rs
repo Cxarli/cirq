@@ -18,19 +18,24 @@ use portgate::*;
 
 
 fn main() {
-    let inputfile = "./tests/xor.json";
+    let inputfile = "./tests/not_loop.json";
 
+    // Read JSON file
     let mut jsonstring = String::new();
     File::open(inputfile).unwrap().read_to_string(&mut jsonstring).ok();
 
+    // Convert to JSON
     let json: Value = serde_json::from_str(&jsonstring).unwrap();
 
+    // Parse circuit, gates and wires
     let json_circuit = json.get("circuit").unwrap();
     let json_gates = json_circuit.get("gates").unwrap().as_object().unwrap();
     let json_wires = json_circuit.get("wires").unwrap().as_array().unwrap();
 
+    // Construct circuit
     let mut circuit = Circuit::new();
 
+    // Add gates
     for (uuid, json_gate) in json_gates {
         let gate_type = json_gate.get("type").unwrap().as_str().unwrap().to_owned();
         let gate = Gate::new(uuid.to_owned(), gate_type);
@@ -38,7 +43,7 @@ fn main() {
         circuit.gates.insert(uuid.to_owned(), gate);
     }
 
-
+    // Add wires
     for json_wire in json_wires {
         let port_from = json_wire.get("a").unwrap().as_str().unwrap().to_owned();
         let port_to = json_wire.get("b").unwrap().as_str().unwrap().to_owned();
@@ -51,13 +56,15 @@ fn main() {
         circuit.connect(&connection);
     }
 
-
+    // Get all inputs
     let inputs = circuit.get_inputs();
 
-    // Prepare circuit
+    // Spread all inputs (prepare circuit)
     for input in &inputs {
         circuit.spread_port(&PortGate::from(input.to_owned()));
     }
+
+    // Do some operations
 
     println!("inputs: {}", circuit.get_inputs().len());
     println!("outputs: {}", circuit.get_outputs().len());

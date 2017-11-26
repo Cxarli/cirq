@@ -9,6 +9,13 @@ pub struct Port {
 }
 
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PortType {
+    In,
+    Out,
+}
+
+
 impl Port {
     pub fn new(port_type: PortType) -> Port {
         Port {
@@ -48,11 +55,4 @@ impl Port {
 
         return string;
     }
-}
-
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PortType {
-    In,
-    Out,
 }

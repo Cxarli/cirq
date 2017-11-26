@@ -17,6 +17,9 @@ impl Gate {
         let mut ports: HashMap<String, Port> = HashMap::new();
 
         match &*gate_type {
+
+            // TODO: These portnames are not static anymore!
+
             "OUT" => {
                 ports.insert("I0".to_owned(), Port::new(PortType::In));
             },
@@ -57,6 +60,9 @@ impl Gate {
         let mut to_spread = vec! { };
 
         match &*self.gate_type {
+
+            // TODO: These portnames are not static anymore!
+
             "AND" => {
                 let state = {
                     let i0 = self.ports.get("I0").unwrap();
@@ -124,19 +130,6 @@ impl Gate {
 
 
         return to_spread;
-    }
-
-
-    pub fn stringify(&self) -> String {
-        let mut string = String::new();
-
-        string += &format!("{}\n", &self.gate_type);
-
-        for (port_uuid, port) in &self.ports {
-            string += &format!("\t{}: {}\n", port_uuid, port.stringify());
-        }
-
-        return string;
     }
 
 

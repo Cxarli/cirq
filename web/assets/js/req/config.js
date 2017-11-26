@@ -7,11 +7,13 @@ require.config({
     },
 
     CustomGate: {
-      deps: [ ],
+      deps: [ 'utils' ],
+      exports: 'CustomGate',
     },
 
     Template: {
       deps: [ 'utils' ],
+      exports: 'Template',
     },
 
     Circuit: {
@@ -43,7 +45,7 @@ require.config({
     },
 
     indexx: {
-      deps: [ 'dragAndDropEvents', 'Circuit', 'CustomGate', 'wireEvents', 'Wire', 'Gate', 'Template', 'utils' ],
+      deps: [ 'dragAndDropEvents', 'wireEvents', 'Circuit', 'CustomGate', 'Template', 'utils', 'Wire', 'Gate' ],
     },
   },
 });

@@ -1,5 +1,6 @@
 /* global Gate, redrawAllWires, LOOP_OBJ */
 
+
 let dragged = null;
 
 
@@ -49,30 +50,47 @@ function drop(event) {
 
   // If element is dropped in the trash
   if (event.target.classList.contains('trash')) {
+    // Custom gate in the toolbox
     if (dragged.classList.contains('gate-custom') && dragged.dataset.clone == "true") {
-      // Custom gate in the toolbox
       let type = dragged.dataset.type;
+
       if (confirm("Delete " + type + " ?")) {
+        // Delete custom gate
         dragged.parentNode.removeChild(dragged);
-        dragged = null;
+
         delete window._customGates[type];
+
+        dragged = null;
         return;
       }
     }
 
+    // Destroy gate
     let gate = window._gates[dragged.uuid];
-    if (gate) gate.destroy();
+    if (gate) {
+      // If it's a known gate: remove it the usual way
+      gate.destroy();
+    } else {
+      // Unknown gate?
+      console.log("Deleting unknown gate?");
+      dragged.parentNode.removeChild(dragged);
+    }
+
     return;
   }
+
 
   let gate;
 
   if (dragged.dataset.clone == "true") {
-    // Clone old gate
+    // Clone dragged gate
     let type = dragged.dataset.type;
+
     gate = new Gate(type, parseInt(dragged.dataset.in), parseInt(dragged.dataset.out));
 
+    // If it's a custom gate
     if (dragged.classList.contains('gate-custom')) {
+      // Set new background color
       gate.setBgColor(dragged.style.backgroundColor);
 
       // Rename ports to the names of the custom gate ports
@@ -99,6 +117,8 @@ function drop(event) {
     gate = window._gates[dragged.uuid];
   }
 
+
+  // Calculate position of gate
   let x = event.clientX;
   let y = event.clientY;
 
@@ -108,10 +128,11 @@ function drop(event) {
 
   gate.setPosition(x, y);
 
+  // Draw gate to circuit
   let circuitElem = event.target;
   gate.draw(circuitElem);
 
-  // Redraw wires
+  // Redraw all wires
   redrawAllWires();
 }
 

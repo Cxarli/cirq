@@ -1,6 +1,8 @@
 /* global Wire */
 
+
 let firstTarget = null, secondTarget = null;
+
 
 function mousedown(event) {
   // Make sure SHIFT is pressed
@@ -40,18 +42,7 @@ function createWire() {
 
 
 function isValidTarget(target) {
-  console.log(target);
-
   return target.classList.contains('port');
-}
-
-
-function redrawAllWires() {
-  let circuitElem = document.getElementById('circuit');
-
-  window._wires.forEach(wire => {
-    wire.redraw(circuitElem);
-  });
 }
 
 

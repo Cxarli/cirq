@@ -1,4 +1,2 @@
-output.json
-
 /target/
 **/*.rs.bk
