@@ -148,3 +148,58 @@ function generateJSON() {
     customGates: customGates,
   };
 }
+
+
+function generateFile() {
+  let json = generateJSON();
+  /*
+    {
+     "circuit": {
+      "gates": {
+       "eec2fc01": { "type": "AND" },
+       "da2ecd25": { "type": "IN" },
+       "daa53637": { "type": "IN" },
+       "2aedae8e": { "type": "OUT" },
+       "6306ee7f": { "type": "NOT" }
+      },
+      "wires": [
+       { "a": "da2ecd25:O0", "b": "eec2fc01:I0" },
+       { "a": "daa53637:O0", "b": "eec2fc01:I1" },
+       { "a": "eec2fc01:O2", "b": "6306ee7f:I0" },
+       { "a": "6306ee7f:O1", "b": "2aedae8e:I0" }
+      ]
+     },
+     "customGates": {}
+    }
+  */
+
+  let output = "";
+
+  /*
+    NAND
+
+    [gates] 5
+    da2ecd25 IN
+    daa53637 IN
+    eec2fc01 AND
+    6306ee7f NOT
+    2aedae8e OUT
+
+    [wires] 4
+    da2ecd25:O0 eec2fc01:I0
+    daa53637:O0 eec2fc01:I1
+    eec2fc01:O0 6306ee7f:I0
+    6306ee7f:O0 2aedae8e:I0
+  */
+
+  // TODO: Get this name from somewhere?
+  output += json.name + "\n";
+  output += "\n";
+  output += "[gates] " + LOOP_OBJ(json.circuit.gates).length() + "\n";
+  LOOP_OBJ(json.circuit.gates).forEach((uuid, data) => uuid + " " + data.type + "\n");
+  output += "\n";
+  output += "[gates] " + LOOP_OBJ(json.circuit.wires).length() + "\n";
+  json.circuit.wires.forEach(wire => wire.a + " " + wire.b + "\n");
+
+  return output;
+}
