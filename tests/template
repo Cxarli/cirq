@@ -1,0 +1,14 @@
+NAND
+
+[gates] 5
+da2ecd25 IN
+daa53637 IN
+eec2fc01 AND
+6306ee7f NOT
+2aedae8e OUT
+
+[wires] 4
+da2ecd25:O0 eec2fc01:I0
+daa53637:O0 eec2fc01:I1
+eec2fc01:O0 6306ee7f:I0
+6306ee7f:O0 2aedae8e:I0
