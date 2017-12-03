@@ -8,17 +8,12 @@ clean:
 	rm -f build/*
 
 
-build/main: build/main.o build/gate.o build/wire.o build/read_template.o
-	$(CC) $(CFLAGS)  build/gate.o build/wire.o build/read_template.o build/main.o  -o build/main
+DEPS = gate circuit wire read_template main
 
-build/main.o: src/main.c
-	$(CC) $(CFLAGS)  -c src/main.c -o build/main.o
+DEPS_O = $(DEPS:%=build/%.o)
 
-build/gate.o: src/gate.c
-	$(CC) $(CFLAGS)  -c src/gate.c -o build/gate.o
+build/main: $(DEPS_O)
+	$(CC) $(CFLAGS)  $(DEPS_O) -o build/main
 
-build/wire.o: src/wire.c
-	$(CC) $(CFLAGS)  -c src/wire.c -o build/wire.o
-
-build/read_template.o: src/read_template.c
-	$(CC) $(CFLAGS)  -c src/read_template.c -o build/read_template.o
+$(DEPS_O): build/%.o: src/%.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@

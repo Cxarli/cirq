@@ -3,18 +3,9 @@
 
 #include <stdlib.h>
 
-#include "gate.h"
-#include "wire.h"
-
-struct gate_template {
-  char gatename[BUF_SIZE];
-  size_t amount_gates;
-  struct gate gates[BUF_SIZE];
-  size_t amount_wires;
-  struct wire wires[BUF_SIZE];
-};
+#include "circuit.h"
 
 
-void read_template(char *filename, struct gate_template *temp);
+void read_template(char *filename, struct circuit *circ);
 
 #endif

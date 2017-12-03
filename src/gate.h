@@ -3,6 +3,7 @@
 
 #include "defines.h"
 
+
 struct gate {
   char name[BUF_SIZE];
   char type[BUF_SIZE];
