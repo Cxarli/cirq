@@ -1,7 +1,0 @@
-[package]
-name = "cirq"
-version = "0.1.0"
-authors = ["C-Bouthoorn <cbouthoorn@gmail.com>"]
-
-[dependencies]
-serde_json = "1.0"
