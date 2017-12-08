@@ -33,6 +33,7 @@ void read_template(char *filename, struct circuit *circ) {
   for (unsigned int i = 0; i < circ->amount_gates; i++) {
     char name[BUF_SIZE];
     char type[BUF_SIZE];
+    struct port ports[BUF_SIZE];
 
     // example:  6306ee7f NOT
     int x = fscanf(file, "%s %s\n", name, type);
@@ -47,6 +48,7 @@ void read_template(char *filename, struct circuit *circ) {
 
     memmove(g.name, name, BUF_SIZE);
     memmove(g.type, type, BUF_SIZE);
+    memmove(g.ports, ports, BUF_SIZE);
 
     circ->gates[i] = g;
 
