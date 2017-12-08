@@ -13,16 +13,17 @@ clean:
 
 remake: clean all
 
-runclean: remake
+cleanrun: remake
+	@echo -e "\n\n"
 	$(OUTPUT)
 
 
-DEPS = port gate circuit wire read_template main
+DEPS = bool circuit gate port read_template wire main
 
 DEPS_O = $(DEPS:%=build/%.o)
 
 build/main: $(DEPS_O)
-	$(CC) $(CFLAGS)  $(DEPS_O) -o build/main
+	$(CC) $(CFLAGS)  $(DEPS_O) -o $(OUTPUT)
 
 $(DEPS_O): build/%.o: src/%.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@

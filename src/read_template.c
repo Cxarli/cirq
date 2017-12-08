@@ -44,11 +44,25 @@ void read_template(char *filename, struct circuit *circ) {
       break;
     }
 
+    // Init ports
+    /*
+    for (int j = 0; j < BUF_SIZE; j++) {
+      struct port p;
+
+      p.name = 'a' + (char) (j % 26);
+      p.state = true;
+
+      ports[i] = p;
+    }
+    */
+
     struct gate g;
 
     memmove(g.name, name, BUF_SIZE);
     memmove(g.type, type, BUF_SIZE);
-    memmove(g.ports, ports, BUF_SIZE);
+    g.amount_ports = 0;
+
+    //memmove(g.ports, ports, BUF_SIZE * BUF_SIZE);
 
     circ->gates[i] = g;
 
