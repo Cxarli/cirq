@@ -2,21 +2,22 @@
 #include <string.h>
 
 #include "gate.h"
+#include "port.h"
 
 
-void gate_to_string(struct gate *gate, char *str) {
-  sprintf(str, "{ [%s] %s }", gate->type, gate->name);
+void print_gate(gate_t *gate) {
+  printf("{ [%s] %s (%lu)}\n", gate->type, gate->name, gate->ports.amount);
 
-  for (unsigned int i = 0; i < gate->amount_ports; i++) {
-    struct port *p = gate->ports[i];
+  DEBUG;
 
-    char buf[BUF_SIZE];
-    port_to_string(p, buf);
+  for (size_t i = 0; i < gate->ports.amount; i++) {
+    port_t *p = gate->ports.items[i];
 
-    char tmp[BUF_SIZE];
-    sprintf(tmp, "%s%s", str, buf);
-    memmove(str, tmp, sizeof(tmp));
+    DEBUG;
 
-    printf("%s\n", tmp);
+    print_port(p);
+    printf("\n");
+
+    DEBUG;
   }
 }

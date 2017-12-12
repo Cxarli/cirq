@@ -4,17 +4,17 @@
 #include <stdlib.h>
 
 #include "defines.h"
-#include "port.h"
+#include "vector.h"
 
 
-struct gate {
-  char name[BUF_SIZE];
-  char type[BUF_SIZE];
+typedef struct gate {
+  char *name;
+  char *type;
 
-  size_t amount_ports;
-  struct port *ports[BUF_SIZE];
-};
+  vector_t ports;
+} gate_t;
 
-void gate_to_string(struct gate *gate, char *str);
+
+void print_gate(gate_t *gate);
 
 #endif

@@ -4,13 +4,13 @@
 #include "defines.h"
 
 
-struct wire {
-  char leftuuid[BUF_SIZE];
-  char leftport[BUF_SIZE];
-  char rightuuid[BUF_SIZE];
-  char rightport[BUF_SIZE];
-};
+typedef struct wire {
+  char *leftuuid;
+  char *leftport;
+  char *rightuuid;
+  char *rightport;
+} wire_t;
 
-void wire_to_string(struct wire *wire, char *str);
+void print_wire(wire_t *wire);
 
 #endif

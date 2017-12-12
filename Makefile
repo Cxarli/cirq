@@ -1,11 +1,14 @@
 CC = clang
 CFLAGS = -Wall -Wextra -Weverything  -O0 -g
 
+# Remove before passing through valgrind
 CFLAGS += -fsanitize=address
 
 OUTPUT = build/main
 
+
 .PHONY: clean remake cleanrun all
+
 all: build/main
 
 clean:
@@ -18,7 +21,7 @@ cleanrun: remake
 	$(OUTPUT)
 
 
-DEPS = bool circuit gate port read_template wire main
+DEPS = bool circuit gate port read_template vector wire main
 
 DEPS_O = $(DEPS:%=build/%.o)
 

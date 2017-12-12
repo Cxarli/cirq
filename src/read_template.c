@@ -7,9 +7,11 @@
 #include "gate.h"
 #include "wire.h"
 #include "circuit.h"
+#include "port.h"
+#include "vector.h"
 
 
-void read_template(char *filename, struct circuit *circ) {
+void read_template(char *filename, circuit_t *circ) {
   char buf[BUF_SIZE];
 
   // Open file
@@ -22,18 +24,24 @@ void read_template(char *filename, struct circuit *circ) {
 
   // Get gates, which are always second
   // example:  [gates] 16
-  fscanf(file, "%s %lu\n", buf, &circ->amount_gates);
+  size_t amount_gates;
+
+  fscanf(file, "%s %lu\n", buf, &amount_gates);
+
   if ( strcmp(buf, "[gates]") != 0 ) {
     printf("no [gates]?? '%s' unexpected\n", buf);
     return;
   }
-  printf("[gates] %lu\n", circ->amount_gates);
 
+  printf("[gates] %lu\n", amount_gates);
 
-  for (unsigned int i = 0; i < circ->amount_gates; i++) {
-    char name[BUF_SIZE];
-    char type[BUF_SIZE];
-    struct port ports[BUF_SIZE];
+  DEBUG;
+
+  for (size_t i = 0; i < amount_gates; i++) {
+    char *name = malloc(BUF_SIZE);
+    char *type = malloc(BUF_SIZE);
+
+    DEBUG;
 
     // example:  6306ee7f NOT
     int x = fscanf(file, "%s %s\n", name, type);
@@ -44,47 +52,48 @@ void read_template(char *filename, struct circuit *circ) {
       break;
     }
 
-    // Init ports
-    /*
-    for (int j = 0; j < BUF_SIZE; j++) {
-      struct port p;
+    DEBUG;
 
-      p.name = 'a' + (char) (j % 26);
-      p.state = true;
+    gate_t g;
+    g.name = name;
+    g.type = type;
 
-      ports[i] = p;
-    }
-    */
+    DEBUG;
 
-    struct gate g;
+    print_gate(&g);
+    printf("\n");
 
-    memmove(g.name, name, BUF_SIZE);
-    memmove(g.type, type, BUF_SIZE);
-    g.amount_ports = 0;
+    DEBUG;
 
-    //memmove(g.ports, ports, BUF_SIZE * BUF_SIZE);
+    vector_push(&circ->gates, &g);
 
-    circ->gates[i] = g;
-
-    printf("[%u] gatename: %s, type: %s\n", i, circ->gates[i].name, circ->gates[i].type);
+    DEBUG;
   }
 
 
   // Get wires, which are third
   // example:  [wires] 20
-  fscanf(file, "%s %lu\n", buf, &circ->amount_wires);
+  size_t amount_wires;
+
+  fscanf(file, "%s %lu\n", buf, &amount_wires);
+
   if ( strcmp(buf, "[wires]") != 0 ) {
     printf("no [wires]?? '%s' unexpected\n", buf);
     return;
   }
-  printf("[wires] %lu\n", circ->amount_wires);
+
+  printf("[wires] %lu\n", amount_wires);
 
 
-  for (unsigned int i = 0; i < circ->amount_wires; i++) {
-    char leftuuid[BUF_SIZE];
-    char leftport[BUF_SIZE];
-    char rightuuid[BUF_SIZE];
-    char rightport[BUF_SIZE];
+  DEBUG;
+
+  for (size_t i = 0; i < amount_wires; i++) {
+    char *leftuuid = malloc(BUF_SIZE);
+    char *leftport = malloc(BUF_SIZE);
+    char *rightuuid = malloc(BUF_SIZE);
+    char *rightport = malloc(BUF_SIZE);
+
+    DEBUG;
 
     // example:  da2ecd25:O0 eec2fc01:I0
     int x = fscanf(file, "%[a-f0-9]:%s %[a-f0-9]:%s\n", leftuuid, leftport, rightuuid, rightport);
@@ -95,14 +104,24 @@ void read_template(char *filename, struct circuit *circ) {
       break;
     }
 
-    struct wire w;
-    memmove(w.leftuuid, leftuuid, BUF_SIZE);
-    memmove(w.leftport, leftport, BUF_SIZE);
-    memmove(w.rightuuid, rightuuid, BUF_SIZE);
-    memmove(w.rightport, rightport, BUF_SIZE);
-    circ->wires[i] = w;
+    DEBUG;
 
-    printf("leftuuid: %s, leftport: %s, rightuuid: %s, rightport: %s\n", w.leftuuid, w.leftport, w.rightuuid, w.rightport);
+    wire_t w;
+    w.leftuuid = leftuuid;
+    w.leftport = leftport;
+    w.rightuuid = rightuuid;
+    w.rightport = rightport;
+
+    DEBUG;
+
+    print_wire(&w);
+    printf("\n");
+
+    DEBUG;
+
+    vector_push(&circ->wires, &w);
+
+    DEBUG;
   }
 
 }

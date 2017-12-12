@@ -4,11 +4,12 @@
 #include "bool.h"
 
 
-struct port {
+typedef struct port {
   char name;
   bool state;
-};
+} port_t;
 
-void port_to_string(struct port *port, char *str);
+
+void print_port(port_t *port);
 
 #endif

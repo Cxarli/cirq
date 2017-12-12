@@ -4,18 +4,17 @@
 #include <stdlib.h>
 
 #include "defines.h"
-#include "gate.h"
-#include "wire.h"
+#include "vector.h"
 
 
-struct circuit {
+typedef struct circuit {
   char name[BUF_SIZE];
-  size_t amount_gates;
-  struct gate gates[BUF_SIZE];
-  size_t amount_wires;
-  struct wire wires[BUF_SIZE];
-};
 
-void print_circuit(struct circuit *circ);
+  vector_t gates;
+  vector_t wires;
+} circuit_t;
+
+
+void print_circuit(circuit_t *circ);
 
 #endif

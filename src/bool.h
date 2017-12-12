@@ -8,6 +8,6 @@
 #define true 1
 
 
-void bool_to_str(bool b, char *str);
+void print_bool(bool b);
 
 #endif

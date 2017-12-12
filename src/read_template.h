@@ -4,6 +4,6 @@
 #include "circuit.h"
 
 
-void read_template(char *filename, struct circuit *circ);
+void read_template(char *filename, circuit_t *circ);
 
 #endif

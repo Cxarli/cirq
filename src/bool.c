@@ -1,13 +1,13 @@
-#include <string.h>
+#include <stdio.h>
 
 #include "bool.h"
 
 
-void bool_to_str(bool b, char *str) {
+void print_bool(bool b) {
   if (b) {
-    memcpy(str, "true", 5);
+    printf("true");
   }
   else {
-    memcpy(str, "false", 6);
+    printf("false");
   }
 }
