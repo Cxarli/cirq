@@ -5,7 +5,7 @@ CFLAGS += -fsanitize=address
 
 OUTPUT = build/main
 
-.PHONY: all
+.PHONY: clean remake cleanrun all
 all: build/main
 
 clean:
