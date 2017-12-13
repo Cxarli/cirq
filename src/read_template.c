@@ -60,7 +60,7 @@ void read_template(char *filename, circuit_t *circ) {
 
     DEBUG;
 
-    print_gate(&g);
+    gate_print(&g);
     printf("\n");
 
     DEBUG;
@@ -114,7 +114,7 @@ void read_template(char *filename, circuit_t *circ) {
 
     DEBUG;
 
-    print_wire(&w);
+    wire_print(&w);
     printf("\n");
 
     DEBUG;

@@ -3,7 +3,7 @@
 #include "bool.h"
 
 
-void print_bool(bool b) {
+void bool_print(bool b) {
   if (b) {
     printf("true");
   }

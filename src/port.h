@@ -1,7 +1,7 @@
 #ifndef PORT_H
 #define PORT_H
 
-#include "bool.h"
+#include <stdbool.h>
 
 
 typedef struct port {
@@ -10,6 +10,6 @@ typedef struct port {
 } port_t;
 
 
-void print_port(port_t *port);
+void port_print(port_t *port);
 
 #endif

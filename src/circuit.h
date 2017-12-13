@@ -15,6 +15,8 @@ typedef struct circuit {
 } circuit_t;
 
 
-void print_circuit(circuit_t *circ);
+void circuit_print(circuit_t *circ);
+
+void circuit_init(circuit_t *circ);
 
 #endif

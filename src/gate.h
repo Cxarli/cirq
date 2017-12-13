@@ -15,6 +15,6 @@ typedef struct gate {
 } gate_t;
 
 
-void print_gate(gate_t *gate);
+void gate_print(gate_t *gate);
 
 #endif

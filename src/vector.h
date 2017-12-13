@@ -3,17 +3,20 @@
 
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "defines.h"
-#include "bool.h"
 
 
 typedef struct vector {
   size_t amount;
-  void* items[BUF_SIZE];
+  size_t size;
+  void** items;
 } vector_t;
 
 
 bool vector_push(vector_t *vec, void *item);
+
+void vector_init(vector_t *vec, size_t size);
 
 #endif

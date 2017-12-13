@@ -11,6 +11,6 @@ typedef struct wire {
   char *rightport;
 } wire_t;
 
-void print_wire(wire_t *wire);
+void wire_print(wire_t *wire);
 
 #endif

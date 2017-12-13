@@ -5,7 +5,7 @@
 #include "port.h"
 
 
-void print_gate(gate_t *gate) {
+void gate_print(gate_t *gate) {
   printf("{ [%s] %s (%lu)}\n", gate->type, gate->name, gate->ports.amount);
 
   DEBUG;
@@ -15,7 +15,7 @@ void print_gate(gate_t *gate) {
 
     DEBUG;
 
-    print_port(p);
+    port_print(p);
     printf("\n");
 
     DEBUG;

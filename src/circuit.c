@@ -5,7 +5,7 @@
 #include "wire.h"
 
 
-void print_circuit(circuit_t *circ) {
+void circuit_print(circuit_t *circ) {
   printf("Circuit %s:\n", circ->name);
   printf("%lu gates, %lu wires\n", circ->gates.amount, circ->wires.amount);
 
@@ -18,7 +18,7 @@ void print_circuit(circuit_t *circ) {
 
     DEBUG;
 
-    print_gate((gate_t*) circ->gates.items[i]);
+    gate_print((gate_t*) circ->gates.items[i]);
     printf("\n");
 
     DEBUG;
@@ -34,9 +34,15 @@ void print_circuit(circuit_t *circ) {
 
     DEBUG;
 
-    print_wire((wire_t*) circ->wires.items[i]);
+    wire_print((wire_t*) circ->wires.items[i]);
     printf("\n");
 
     DEBUG;
   }
+}
+
+
+void circuit_init(circuit_t *circ) {
+  vector_init(&circ->gates, BUF_SIZE);
+  vector_init(&circ->wires, BUF_SIZE);
 }

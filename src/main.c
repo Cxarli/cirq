@@ -9,8 +9,7 @@
 
 int main() {
   circuit_t circ;
-  circ.gates.amount = 0;
-  circ.wires.amount = 0;
+  circuit_init(&circ);
 
 
   DEBUG;
@@ -20,7 +19,7 @@ int main() {
 
   DEBUG;
 
-  print_circuit(&circ);
+  circuit_print(&circ);
 
   DEBUG;
 

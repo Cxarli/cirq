@@ -1,13 +1,10 @@
 #ifndef BOOL_H
 #define BOOL_H
 
-#include <stdint.h>
 
-#define bool uint8_t
-#define false 0
-#define true 1
+#include <stdbool.h>
 
 
-void print_bool(bool b);
+void bool_print(bool b);
 
 #endif

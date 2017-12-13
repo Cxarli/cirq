@@ -5,8 +5,8 @@
 #include "bool.h"
 
 
-void print_port(port_t *port) {
+void port_print(port_t *port) {
   printf("%c (", port->name);
-  print_bool(port->state);
+  bool_print(port->state);
   printf(")");
 }
