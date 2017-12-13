@@ -1,7 +1,6 @@
 #ifndef GATE_H
 #define GATE_H
 
-#include <stdlib.h>
 
 #include "defines.h"
 #include "vector.h"
@@ -16,5 +15,8 @@ typedef struct gate {
 
 
 void gate_print(gate_t *gate);
+
+void gate_init(gate_t *gate);
+void gate_free(gate_t *gate);
 
 #endif

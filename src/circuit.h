@@ -1,14 +1,13 @@
 #ifndef CIRCUIT_H
 #define CIRCUIT_H
 
-#include <stdlib.h>
 
 #include "defines.h"
 #include "vector.h"
 
 
 typedef struct circuit {
-  char name[BUF_SIZE];
+  char *name;
 
   vector_t gates;
   vector_t wires;
@@ -18,5 +17,6 @@ typedef struct circuit {
 void circuit_print(circuit_t *circ);
 
 void circuit_init(circuit_t *circ);
+void circuit_free(circuit_t *circ);
 
 #endif

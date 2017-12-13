@@ -6,7 +6,7 @@
 #define DEBUG ;
 
 #ifndef DEBUG
-  #define DEBUG printf("DEBUG %s:%i\r", __FILE__, __LINE__)
+  #define DEBUG printf("DEBUG %s:%i %s\n", __FILE__, __LINE__, __FUNCTION__)
 #endif
 
 #endif

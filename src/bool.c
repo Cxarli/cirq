@@ -1,13 +1,8 @@
-#include <stdio.h>
+#include <stdio.h> // printf
 
 #include "bool.h"
 
 
 void bool_print(bool b) {
-  if (b) {
-    printf("true");
-  }
-  else {
-    printf("false");
-  }
+  printf(b ? "true" : "false");
 }

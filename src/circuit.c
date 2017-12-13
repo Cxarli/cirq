@@ -1,48 +1,60 @@
-#include <stdio.h>
+#include <stdio.h> // printf
 
 #include "circuit.h"
-#include "gate.h"
-#include "wire.h"
+
+#include "gate.h" // gate_print, gate_t
+#include "wire.h" // wire_print, wire_t
 
 
 void circuit_print(circuit_t *circ) {
   printf("Circuit %s:\n", circ->name);
-  printf("%lu gates, %lu wires\n", circ->gates.amount, circ->wires.amount);
+  printf("%lu gates, %lu wires\n\n", circ->gates.amount, circ->wires.amount);
 
-  printf("\n");
-
-  DEBUG;
-
+  // Print gates
   for (size_t i = 0; i < circ->gates.amount; i++) {
-    printf("gate %lu:\n", i);
-
-    DEBUG;
+    printf("gate %lu: ", i);
 
     gate_print((gate_t*) circ->gates.items[i]);
     printf("\n");
-
-    DEBUG;
   }
-
 
   printf("\n");
 
-  DEBUG;
-
+  // Print wires
   for (size_t i = 0; i < circ->wires.amount; i++) {
-    printf("wire %lu:\n", i);
-
-    DEBUG;
+    printf("wire %lu: ", i);
 
     wire_print((wire_t*) circ->wires.items[i]);
     printf("\n");
-
-    DEBUG;
   }
 }
 
 
 void circuit_init(circuit_t *circ) {
+  circ->name = NULL;
+
   vector_init(&circ->gates, BUF_SIZE);
   vector_init(&circ->wires, BUF_SIZE);
+}
+
+
+void circuit_free(circuit_t *circ) {
+  if (circ->name) free(circ->name);
+
+  // Free gates
+  for (size_t i=0; i < circ->gates.amount; i++) {
+    gate_free(circ->gates.items[i]);
+    free(circ->gates.items[i]);
+  }
+
+  vector_free(&circ->gates);
+
+
+  // Free wires
+  for (size_t i=0; i < circ->wires.amount; i++) {
+    wire_free(circ->wires.items[i]);
+    free(circ->wires.items[i]);
+  }
+
+  vector_free(&circ->wires);
 }
