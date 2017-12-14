@@ -1,32 +1,61 @@
 #include <stdio.h> // printf
+#include <string.h> // strcmp
 
 #include "circuit.h"
 
-#include "gate.h" // gate_print, gate_t
-#include "wire.h" // wire_print, wire_t
-
 
 void circuit_print(circuit_t *circ) {
-  printf("Circuit %s:\n", circ->name);
-  printf("%lu gates, %lu wires\n\n", circ->gates.amount, circ->wires.amount);
+  printf("Circuit %s: %lu gates\n\n", circ->name, circ->gates.amount);
 
   // Print gates
   for (size_t i = 0; i < circ->gates.amount; i++) {
     printf("gate %lu: ", i);
 
-    gate_print((gate_t*) circ->gates.items[i]);
+    gate_print(circ->gates.items[i]);
     printf("\n");
   }
+}
 
-  printf("\n");
 
-  // Print wires
-  for (size_t i = 0; i < circ->wires.amount; i++) {
-    printf("wire %lu: ", i);
-
-    wire_print((wire_t*) circ->wires.items[i]);
-    printf("\n");
+port_t *gate_get_port_by_name(gate_t *gate, char *name) {
+  VEC_EACH(gate->ports, port_t *port) {
+    if (strcmp(port->name, name) == 0) {
+      return port;
+    }
   }
+
+  return NULL;
+}
+
+
+void circuit_apply_wire(circuit_t *circ, wire_t *wire) {
+  port_t *left_port = NULL;
+  port_t *right_port = NULL;
+
+  // Get the matching ports
+  VEC_EACH(circ->gates, gate_t *gate) {
+    switch_str(gate->name);
+
+    case_str(wire->leftuuid) {
+      left_port = gate_get_port_by_name(gate, wire->leftport);
+    }
+
+    else case_str(wire->rightuuid) {
+      right_port = gate_get_port_by_name(gate, wire->rightport);
+    }
+  }
+
+  // Make sure we got all ports
+  if (left_port == NULL || right_port == NULL) {
+    printf("Failed to find both ports for wire ");
+    wire_print(wire);
+    printf("\n");
+    return;
+  }
+
+  // Add connection
+  vector_push(&left_port->connections, right_port);
+  vector_push(&right_port->connections, left_port);
 }
 
 
@@ -34,7 +63,6 @@ void circuit_init(circuit_t *circ) {
   circ->name = NULL;
 
   vector_init(&circ->gates, BUF_SIZE);
-  vector_init(&circ->wires, BUF_SIZE);
 }
 
 
@@ -42,19 +70,10 @@ void circuit_free(circuit_t *circ) {
   if (circ->name) free(circ->name);
 
   // Free gates
-  for (size_t i=0; i < circ->gates.amount; i++) {
-    gate_free(circ->gates.items[i]);
-    free(circ->gates.items[i]);
+  VEC_EACH(circ->gates, gate_t* g) {
+    gate_free(g);
   }
 
   vector_free(&circ->gates);
-
-
-  // Free wires
-  for (size_t i=0; i < circ->wires.amount; i++) {
-    wire_free(circ->wires.items[i]);
-    free(circ->wires.items[i]);
-  }
-
-  vector_free(&circ->wires);
+  free(circ);
 }

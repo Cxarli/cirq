@@ -2,6 +2,7 @@
 #define READ_TEMPLATE_H
 
 
+#include "defines.h"
 #include "circuit.h"
 
 

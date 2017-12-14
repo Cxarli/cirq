@@ -4,10 +4,23 @@
 
 #include <stdbool.h>
 
+#include "defines.h"
+#include "vector.h"
+
+
+enum PortType {
+  PortType_INPUT,
+  PortType_OUTPUT
+};
+
 
 typedef struct port {
-  char name;
+  char *name;
+  char *gatename;
   bool state;
+  enum PortType type;
+
+  vector_t connections;
 } port_t;
 
 

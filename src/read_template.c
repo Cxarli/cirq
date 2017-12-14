@@ -1,11 +1,7 @@
-#include <stdio.h>
+#include <stdio.h> // FILE, fopen, fclose, fscanf, fprintf, printf
 #include <string.h> // strcmp
 
 #include "read_template.h"
-
-#include "defines.h"
-#include "gate.h" // gate_print, gate_t
-#include "wire.h" // wire_print, wire_t
 
 
 void read_template(char *filename, circuit_t *circ) {
@@ -18,7 +14,7 @@ void read_template(char *filename, circuit_t *circ) {
   // example: NAND
   circ->name = malloc(BUF_SIZE * sizeof(char));
   fscanf(file, "%s\n", circ->name);
-  printf("name: %s\n", circ->name);
+
 
   // Get gates, which are always second
   // example:  [gates] 16
@@ -27,11 +23,9 @@ void read_template(char *filename, circuit_t *circ) {
   fscanf(file, "%s %lu\n", buf, &amount_gates);
 
   if ( strcmp(buf, "[gates]") != 0 ) {
-    printf("no [gates]?? '%s' unexpected\n", buf);
+    fprintf(stderr, "no [gates]?? '%s' unexpected\n", buf);
     return;
   }
-
-  printf("[gates] %lu\n", amount_gates);
 
   DEBUG;
 
@@ -44,7 +38,7 @@ void read_template(char *filename, circuit_t *circ) {
 
     if ( x == -1 ) {
       // Unexpected end of file
-      printf("EOF??\n");
+      fprintf(stderr, "EOF??\n");
       break;
     }
 
@@ -56,9 +50,7 @@ void read_template(char *filename, circuit_t *circ) {
     g->name = name;
     g->type = type;
 
-
-    gate_print(g);
-    printf("\n");
+    gate_set_ports(g);
 
     vector_push(&circ->gates, g);
   }
@@ -71,12 +63,9 @@ void read_template(char *filename, circuit_t *circ) {
   fscanf(file, "%s %lu\n", buf, &amount_wires);
 
   if ( strcmp(buf, "[wires]") != 0 ) {
-    printf("no [wires]?? '%s' unexpected\n", buf);
+    fprintf(stderr, "no [wires]?? '%s' unexpected\n", buf);
     return;
   }
-
-  printf("[wires] %lu\n", amount_wires);
-
 
   DEBUG;
 
@@ -91,11 +80,11 @@ void read_template(char *filename, circuit_t *circ) {
 
     if ( x == -1 ) {
       // Unexpected end of file
-      printf("EOF??\n");
+      fprintf(stderr, "EOF??\n");
       break;
     }
 
-    // New wire
+    // Create new wire
     wire_t *w = malloc(sizeof(wire_t));
     wire_init(w);
 
@@ -104,13 +93,12 @@ void read_template(char *filename, circuit_t *circ) {
     w->rightuuid = rightuuid;
     w->rightport = rightport;
 
-    wire_print(w);
-    printf("\n");
+    circuit_apply_wire(circ, w);
 
-    vector_push(&circ->wires, w);
+    wire_free(w);
   }
 
 
+  // Close template file
   fclose(file);
-
 }

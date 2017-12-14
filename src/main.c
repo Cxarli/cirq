@@ -8,19 +8,12 @@
 
 
 int main() {
-  circuit_t circ;
-  circuit_init(&circ);
+  circuit_t *circ = malloc(sizeof(circuit_t));
+  circuit_init(circ);
 
-  DEBUG;
+  read_template("tests/template", circ);
 
-  read_template("tests/template", &circ);
-  printf("\n\n");
+  circuit_print(circ);
 
-  DEBUG;
-
-  circuit_print(&circ);
-
-  DEBUG;
-
-  circuit_free(&circ);
+  circuit_free(circ);
 }
