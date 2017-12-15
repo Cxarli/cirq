@@ -99,6 +99,9 @@ void read_template(char *filename, circuit_t *circ) {
     free(w);
   }
 
+
+  circuit_update_state(circ);
+
   // Close template file
   fclose(file);
 }

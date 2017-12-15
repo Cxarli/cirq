@@ -4,17 +4,6 @@
 #include "circuit.h"
 
 
-port_t *gate_get_port_by_name(gate_t *gate, char *name) {
-  VEC_EACH(gate->ports, port_t *port) {
-    if (strcmp(port->name, name) == 0) {
-      return port;
-    }
-  }
-
-  return NULL;
-}
-
-
 void circuit_apply_wire(circuit_t *circ, wire_t *wire) {
   port_t *left_port = NULL;
   port_t *right_port = NULL;
@@ -43,6 +32,24 @@ void circuit_apply_wire(circuit_t *circ, wire_t *wire) {
   // Add connection
   vector_push(&left_port->connections, right_port);
   vector_push(&right_port->connections, left_port);
+}
+
+
+void circuit_update_state(circuit_t *circ) {
+  VEC_EACH(circ->gates, gate_t *gate) {
+    gate_update_state(gate);
+  }
+}
+
+
+gate_t *circuit_get_gate_by_name(circuit_t *circ, char *name) {
+  VEC_EACH(circ->gates, gate_t *gate) {
+    if (strcmp(gate->name, name) == 0) {
+      return gate;
+    }
+  }
+
+  return NULL;
 }
 
 

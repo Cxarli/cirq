@@ -7,6 +7,9 @@
 #include "defines.h"
 #include "vector.h"
 
+// forward-declaration
+typedef struct gate gate_t;
+
 
 enum PortType {
   PortType_INPUT,
@@ -14,15 +17,19 @@ enum PortType {
 };
 
 
+
 typedef struct port {
   char *name;
-  char *gatename;
   bool state;
   enum PortType type;
 
+  gate_t *gate;
   vector_t connections;
 } port_t;
 
+
+void port_update_state(port_t *port);
+void port_set_state(port_t *port, bool state);
 
 void port_print(port_t *port);
 void port_init(port_t *port);

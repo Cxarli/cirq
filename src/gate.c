@@ -4,6 +4,17 @@
 #include "gate.h"
 
 
+port_t *gate_get_port_by_name(gate_t *gate, char *name) {
+  VEC_EACH(gate->ports, port_t *port) {
+    if (strcmp(port->name, name) == 0) {
+      return port;
+    }
+  }
+
+  return NULL;
+}
+
+
 void gate_add_input(gate_t *gate, int i, char name[]) {
   if (name == NULL) {
     // Set default name
@@ -16,7 +27,7 @@ void gate_add_input(gate_t *gate, int i, char name[]) {
   port_init(p);
 
   p->name = name;
-  p->gatename = gate->name;
+  p->gate = gate;
   p->type = PortType_INPUT;
 
   // Add port
@@ -36,7 +47,7 @@ void gate_add_output(gate_t *gate, int i, char *name) {
   port_init(p);
 
   p->name = name;
-  p->gatename = gate->name;
+  p->gate = gate;
   p->type = PortType_OUTPUT;
 
   // Add port
@@ -52,20 +63,24 @@ void gate_set_ports(gate_t *gate) {
       gate_add_output(gate, 0, NULL);
     }
 
+
     else case_str("OR") {
       gate_add_input(gate, 0, NULL);
       gate_add_input(gate, 1, NULL);
       gate_add_output(gate, 0, NULL);
     }
 
+
     else case_str("NOT") {
       gate_add_input(gate, 0, NULL);
       gate_add_output(gate, 0, NULL);
     }
 
+
     else case_str("IN") {
       gate_add_output(gate, 0, NULL);
     }
+
 
     else case_str("OUT") {
       gate_add_input(gate, 0, NULL);
@@ -74,6 +89,54 @@ void gate_set_ports(gate_t *gate) {
     // TODO: Custom gates
   }
 }
+
+
+void gate_update_state(gate_t *gate) {
+  switch_str(gate->type) {
+    case_str("AND") {
+      port_t *i0 = gate->ports.items[0];
+      port_t *i1 = gate->ports.items[1];
+      port_t *o0 = gate->ports.items[2];
+
+      o0->state = i0->state && i1->state;
+      port_update_state(o0);
+    }
+
+
+    else case_str("OR") {
+      port_t *i0 = gate->ports.items[0];
+      port_t *i1 = gate->ports.items[1];
+      port_t *o0 = gate->ports.items[2];
+
+      o0->state = i0->state || i1->state;
+      port_update_state(o0);
+    }
+
+
+    else case_str("NOT") {
+      port_t *i0 = gate->ports.items[0];
+      port_t *o0 = gate->ports.items[1];
+
+      o0->state = ! i0->state;
+      port_update_state(o0);
+    }
+
+
+    else case_str("IN") {
+      port_t *o0 = gate->ports.items[0];
+
+      (void) o0;
+    }
+
+
+    else case_str("OUT") {
+      port_t *i0 = gate->ports.items[0];
+
+      (void) i0;
+    }
+  }
+}
+
 
 
 void gate_print(gate_t *gate) {
