@@ -4,19 +4,6 @@
 #include "circuit.h"
 
 
-void circuit_print(circuit_t *circ) {
-  printf("Circuit %s: %lu gates\n\n", circ->name, circ->gates.amount);
-
-  // Print gates
-  for (size_t i = 0; i < circ->gates.amount; i++) {
-    printf("gate %lu: ", i);
-
-    gate_print(circ->gates.items[i]);
-    printf("\n");
-  }
-}
-
-
 port_t *gate_get_port_by_name(gate_t *gate, char *name) {
   VEC_EACH(gate->ports, port_t *port) {
     if (strcmp(port->name, name) == 0) {
@@ -56,6 +43,19 @@ void circuit_apply_wire(circuit_t *circ, wire_t *wire) {
   // Add connection
   vector_push(&left_port->connections, right_port);
   vector_push(&right_port->connections, left_port);
+}
+
+
+void circuit_print(circuit_t *circ) {
+  printf("Circuit %s: %lu gates\n\n", circ->name, circ->gates.amount);
+
+  // Print gates
+  for (size_t i = 0; i < circ->gates.amount; i++) {
+    printf("gate %lu: ", i);
+
+    gate_print(circ->gates.items[i]);
+    printf("\n");
+  }
 }
 
 

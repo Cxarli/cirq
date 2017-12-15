@@ -4,25 +4,6 @@
 #include "gate.h"
 
 
-void gate_print(gate_t *gate) {
-  printf("{ %s [%s] }\n", gate->name, gate->type);
-
-  VEC_EACH(gate->ports, port_t* p) {
-    printf("\t");
-    port_print(p);
-    printf("\n");
-  }
-}
-
-
-void gate_init(gate_t *gate) {
-  gate->name = NULL;
-  gate->type = NULL;
-
-  vector_init(&gate->ports, BUF_SIZE);
-}
-
-
 void gate_add_input(gate_t *gate, int i, char name[]) {
   if (name == NULL) {
     // Set default name
@@ -92,6 +73,25 @@ void gate_set_ports(gate_t *gate) {
 
     // TODO: Custom gates
   }
+}
+
+
+void gate_print(gate_t *gate) {
+  printf("{ %s [%s] }\n", gate->name, gate->type);
+
+  VEC_EACH(gate->ports, port_t* p) {
+    printf("\t");
+    port_print(p);
+    printf("\n");
+  }
+}
+
+
+void gate_init(gate_t *gate) {
+  gate->name = NULL;
+  gate->type = NULL;
+
+  vector_init(&gate->ports, BUF_SIZE);
 }
 
 
