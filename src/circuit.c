@@ -72,8 +72,8 @@ void circuit_free(circuit_t *circ) {
   // Free gates
   VEC_EACH(circ->gates, gate_t* g) {
     gate_free(g);
+    free(g);
   }
 
   vector_free(&circ->gates);
-  free(circ);
 }

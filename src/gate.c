@@ -102,9 +102,8 @@ void gate_free(gate_t *gate) {
   // Free all ports
   VEC_EACH(gate->ports, port_t* p) {
     port_free(p);
+    free(p);
   }
 
   vector_free(&gate->ports);
-
-  free(gate);
 }

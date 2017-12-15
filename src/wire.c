@@ -24,6 +24,4 @@ void wire_free(wire_t *wire) {
   if (wire->leftport) free(wire->leftport);
   if (wire->rightuuid) free(wire->rightuuid);
   if (wire->rightport) free(wire->rightport);
-
-  free(wire);
 }

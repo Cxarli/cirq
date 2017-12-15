@@ -32,5 +32,4 @@ void vector_init(vector_t *vec, size_t size) {
 
 void vector_free(vector_t *vec) {
   free(vec->items);
-  free(vec);
 }

@@ -96,8 +96,8 @@ void read_template(char *filename, circuit_t *circ) {
     circuit_apply_wire(circ, w);
 
     wire_free(w);
+    free(w);
   }
-
 
   // Close template file
   fclose(file);

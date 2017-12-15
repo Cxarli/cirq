@@ -31,8 +31,8 @@ void port_init(port_t *port) {
 
 void port_free(port_t *port) {
   if (port->name) free(port->name);
+  // Should be free'd by the gate:
+  // if (port->gatename) free(port->gatename);
 
   vector_free(&port->connections);
-
-  free(port);
 }

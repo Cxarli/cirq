@@ -16,4 +16,5 @@ int main() {
   circuit_print(circ);
 
   circuit_free(circ);
+  free(circ);
 }
