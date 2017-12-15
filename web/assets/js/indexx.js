@@ -202,12 +202,12 @@ function generateFile(json) {
 
   output += "\n";
 
-  output += "[wires] " + LOOP_OBJ(json.circuit.gates).length() + "\n";
+  output += "[gates] " + LOOP_OBJ(json.circuit.gates).length() + "\n";
   LOOP_OBJ(json.circuit.gates).forEach((uuid, data) => output += uuid + " " + data.type + "\n");
 
   output += "\n";
 
-  output += "[gates] " + LOOP_OBJ(json.circuit.wires).length() + "\n";
+  output += "[wires] " + LOOP_OBJ(json.circuit.wires).length() + "\n";
   json.circuit.wires.forEach(wire => output += wire.a + " " + wire.b + "\n");
 
   output += "\n";
