@@ -13,6 +13,8 @@ typedef struct wire {
 } wire_t;
 
 
+void wire_print_err(wire_t *wire);
+
 void wire_print(wire_t *wire);
 void wire_init(wire_t *wire);
 void wire_free(wire_t *wire);

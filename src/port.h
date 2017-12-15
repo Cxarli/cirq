@@ -30,6 +30,7 @@ typedef struct port {
 
 void port_update_state(port_t *port);
 void port_set_state(port_t *port, bool state);
+bool port_get_state(port_t *port);
 
 void port_print(port_t *port);
 void port_init(port_t *port);

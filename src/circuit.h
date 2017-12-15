@@ -18,6 +18,7 @@ typedef struct circuit {
 void circuit_apply_wire(circuit_t *circ, wire_t *wire);
 void circuit_update_state(circuit_t *circ);
 gate_t *circuit_get_gate_by_name(circuit_t *circ, char *name);
+port_t *circuit_get_port_by_name(circuit_t *circ, char *gatename, char *portname);
 
 void circuit_print(circuit_t *circ);
 void circuit_init(circuit_t *circ);

@@ -25,7 +25,7 @@
 
 // use it like:
 /*
-{ switch_str(name)
+{ switch_str(name);
 
   case_str("foo") {
 

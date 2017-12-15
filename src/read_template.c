@@ -99,7 +99,9 @@ void read_template(char *filename, circuit_t *circ) {
     free(w);
   }
 
-
+  // Make sure all gates are in the right state
+  // NOTE: This will crash if a contradicting loop occurs in the program
+  //   example: NOT:I0 <---> NOT:O0
   circuit_update_state(circ);
 
   // Close template file

@@ -11,6 +11,11 @@ void wire_print(wire_t *wire) {
 }
 
 
+void wire_print_err(wire_t *wire) {
+  fprintf(stderr, "%s:%s <---> %s:%s", wire->leftuuid, wire->leftport, wire->rightuuid, wire->rightport);
+}
+
+
 void wire_init(wire_t *wire) {
   wire->leftuuid = NULL;
   wire->leftport = NULL;

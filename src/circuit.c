@@ -3,6 +3,8 @@
 
 #include "circuit.h"
 
+#include "utils.h"
+
 
 void circuit_apply_wire(circuit_t *circ, wire_t *wire) {
   port_t *left_port = NULL;
@@ -10,22 +12,27 @@ void circuit_apply_wire(circuit_t *circ, wire_t *wire) {
 
   // Get the matching ports
   VEC_EACH(circ->gates, gate_t *gate) {
-    switch_str(gate->name);
+    switch_str(gate->name) {
+      case_str(wire->leftuuid) {
+        left_port = gate_get_port_by_name(gate, wire->leftport);
+      }
 
-    case_str(wire->leftuuid) {
-      left_port = gate_get_port_by_name(gate, wire->leftport);
-    }
-
-    else case_str(wire->rightuuid) {
-      right_port = gate_get_port_by_name(gate, wire->rightport);
+      // NOTE: Using `else` disables the possibility to link a gate to itself
+      case_str(wire->rightuuid) {
+        right_port = gate_get_port_by_name(gate, wire->rightport);
+      }
     }
   }
 
   // Make sure we got all ports
   if (left_port == NULL || right_port == NULL) {
+    STDOUT_TO_STDERR();
+
     printf("Failed to find both ports for wire ");
     wire_print(wire);
     printf("\n");
+
+    RESET_STDOUT();
     return;
   }
 
@@ -50,6 +57,11 @@ gate_t *circuit_get_gate_by_name(circuit_t *circ, char *name) {
   }
 
   return NULL;
+}
+
+
+port_t *circuit_get_port_by_name(circuit_t *circ, char *gatename, char *portname) {
+  return gate_get_port_by_name(circuit_get_gate_by_name(circ, gatename), portname);
 }
 
 

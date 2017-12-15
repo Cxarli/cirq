@@ -28,6 +28,11 @@ void port_set_state(port_t *port, bool state) {
 }
 
 
+bool port_get_state(port_t *port) {
+  return port->state;
+}
+
+
 void port_print(port_t *port) {
   printf("    :%s (", port->name);
   bool_print(port->state);
