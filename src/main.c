@@ -26,6 +26,11 @@ int main(int argc, char *argv[]) {
       else case_str("xor") {
         TEST(test_xor);
       }
+
+      else case_str("full_adder") {
+        printf("\nBe prepared for errors...\n");
+        TEST(test_full_adder);
+      }
     }
   }
 

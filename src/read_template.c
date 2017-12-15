@@ -4,7 +4,7 @@
 #include "read_template.h"
 
 
-void read_template(char *filename, circuit_t *circ) {
+bool read_template(char *filename, circuit_t *circ) {
   char buf[BUF_SIZE];
 
   // Open file
@@ -24,7 +24,7 @@ void read_template(char *filename, circuit_t *circ) {
 
   if ( strcmp(buf, "[gates]") != 0 ) {
     fprintf(stderr, "no [gates]?? '%s' unexpected\n", buf);
-    return;
+    goto error;
   }
 
   DEBUG;
@@ -39,7 +39,7 @@ void read_template(char *filename, circuit_t *circ) {
     if ( x == -1 ) {
       // Unexpected end of file
       fprintf(stderr, "EOF??\n");
-      break;
+      goto error;
     }
 
     // New gate
@@ -64,7 +64,7 @@ void read_template(char *filename, circuit_t *circ) {
 
   if ( strcmp(buf, "[wires]") != 0 ) {
     fprintf(stderr, "no [wires]?? '%s' unexpected\n", buf);
-    return;
+    goto error;
   }
 
   DEBUG;
@@ -81,7 +81,7 @@ void read_template(char *filename, circuit_t *circ) {
     if ( x == -1 ) {
       // Unexpected end of file
       fprintf(stderr, "EOF??\n");
-      break;
+      goto error;
     }
 
     // Create new wire
@@ -93,11 +93,17 @@ void read_template(char *filename, circuit_t *circ) {
     w->rightuuid = rightuuid;
     w->rightport = rightport;
 
-    circuit_apply_wire(circ, w);
+    bool ok = circuit_apply_wire(circ, w);
 
     wire_free(w);
     free(w);
+
+    if (! ok) goto error;
   }
+
+
+  bool success = true;
+  end:
 
   // Make sure all gates are in the right state
   // NOTE: This will crash if a contradicting loop occurs in the program
@@ -106,4 +112,11 @@ void read_template(char *filename, circuit_t *circ) {
 
   // Close template file
   fclose(file);
+
+  return success;
+
+  error:
+
+  success = false;
+  goto end;
 }

@@ -6,7 +6,7 @@
 #include "utils.h"
 
 
-void circuit_apply_wire(circuit_t *circ, wire_t *wire) {
+bool circuit_apply_wire(circuit_t *circ, wire_t *wire) {
   port_t *left_port = NULL;
   port_t *right_port = NULL;
 
@@ -33,12 +33,14 @@ void circuit_apply_wire(circuit_t *circ, wire_t *wire) {
     printf("\n");
 
     RESET_STDOUT();
-    return;
+    return false;
   }
 
   // Add connection
   vector_push(&left_port->connections, right_port);
   vector_push(&right_port->connections, left_port);
+
+  return true;
 }
 
 

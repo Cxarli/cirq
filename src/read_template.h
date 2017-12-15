@@ -6,6 +6,6 @@
 #include "circuit.h"
 
 
-void read_template(char *filename, circuit_t *circ);
+bool read_template(char *filename, circuit_t *circ);
 
 #endif

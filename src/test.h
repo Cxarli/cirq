@@ -12,7 +12,7 @@
 
 #define assert_true(x) \
   if (! (x)) \
-    failstr(#x " is true");
+    failstr(#x " is not true");
 
 #define assert_false(x) \
   if ((x)) \
@@ -38,13 +38,14 @@
   return fails; \
 
 #define TESTS_START \
-  printf("Starting tests...\n"); \
+  printf("\n\nStarting tests...\n"); \
   unsigned int tests = 0, failed_tests = 0; \
 
 #define TESTS_RESULT \
-  printf("Tests done. %i / %i success\n", tests - failed_tests, tests); \
+  printf("\n\nTests done. %i / %i success\n", tests - failed_tests, tests); \
 
 
 unsigned int test_nand(void);
 unsigned int test_not_loop(void);
 unsigned int test_xor(void);
+unsigned int test_full_adder(void);

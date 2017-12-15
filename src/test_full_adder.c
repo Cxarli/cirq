@@ -8,7 +8,7 @@
 #include "test.h"
 
 
-unsigned int test_not_loop(void) {
+unsigned int test_full_adder(void) {
   TEST_START;
 
   // Create circuit
@@ -16,7 +16,7 @@ unsigned int test_not_loop(void) {
   circuit_init(circ);
 
   // Read template
-  assert_false(read_template("tests/not_loop", circ));
+  assert_true(read_template("tests/full_adder", circ));
 
   // Free everything
   circuit_free(circ);
