@@ -1,0 +1,31 @@
+XOR
+
+[gates] 8
+2138e29d IN
+1afdb1ed AND
+77904d9a NOT
+4e0e5e69 OR
+4529cffe OUT
+bf0a3903 IN
+e34ca847 NOT
+f7fa3db6 AND
+
+[wires] 9
+2138e29d:O0 77904d9a:I0
+77904d9a:O0 1afdb1ed:I0
+1afdb1ed:O0 4e0e5e69:I0
+4e0e5e69:O0 4529cffe:I0
+f7fa3db6:O0 4e0e5e69:I1
+e34ca847:O0 f7fa3db6:I0
+bf0a3903:O0 e34ca847:I0
+bf0a3903:O0 1afdb1ed:I1
+2138e29d:O0 f7fa3db6:I1
+
+
+
+Used to be:
+2138e29d:a 77904d9a:I0
+4e0e5e69:O0 4529cffe:c
+bf0a3903:b e34ca847:I0
+bf0a3903:b 1afdb1ed:I1
+2138e29d:a f7fa3db6:I1
