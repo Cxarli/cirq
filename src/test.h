@@ -46,6 +46,10 @@
 
 
 unsigned int test_nand(void);
-unsigned int test_not_loop(void);
+unsigned int test_nor(void);
+unsigned int test_xand(void);
 unsigned int test_xor(void);
+
 unsigned int test_full_adder(void);
+
+unsigned int test_not_loop(void);

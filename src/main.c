@@ -7,9 +7,11 @@
 int main(int argc, char *argv[]) {
   TESTS_START;
 
-  // If no tests specified, run the NAND and XOR test
+  // If no tests specified, run some default tests
   if (argc == 1) {
     TEST(test_nand);
+    TEST(test_nor);
+    TEST(test_xand);
     TEST(test_xor);
   }
 
@@ -19,8 +21,12 @@ int main(int argc, char *argv[]) {
         TEST(test_nand);
       }
 
-      else case_str("not_loop") {
-        TEST(test_not_loop);
+      else case_str("nor") {
+        TEST(test_nor);
+      }
+
+      else case_str("xand") {
+        TEST(test_xand);
       }
 
       else case_str("xor") {
@@ -30,6 +36,10 @@ int main(int argc, char *argv[]) {
       else case_str("full_adder") {
         printf("\nBe prepared for errors...\n");
         TEST(test_full_adder);
+      }
+
+      else case_str("not_loop") {
+        TEST(test_not_loop);
       }
     }
   }
