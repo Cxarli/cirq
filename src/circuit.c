@@ -58,6 +58,7 @@ gate_t *circuit_get_gate_by_name(circuit_t *circ, char *name) {
     }
   }
 
+  fprintf(stderr, "Failed to find gate '%s'\n", name);
   return NULL;
 }
 

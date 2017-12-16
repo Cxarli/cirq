@@ -17,7 +17,7 @@ typedef struct vector {
 
 // Loop over all items in the vector
 #define VEC_EACH(vec, var) \
-  for (size_t __i = 0, __last; __last = (__i == (vec).amount - 1), __i < (vec).amount; __i++) \
+  for (size_t __i = 0, __last; (void)(__last = (__i == (vec).amount - 1)), __i < (vec).amount; __i++) \
     with(var = (vec).items[__i])
 
 

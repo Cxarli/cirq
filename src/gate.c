@@ -2,6 +2,7 @@
 #include <string.h> // strcmp
 
 #include "gate.h"
+#include "circuit.h"
 
 
 port_t *gate_get_port_by_name(gate_t *gate, char *name) {
@@ -11,15 +12,21 @@ port_t *gate_get_port_by_name(gate_t *gate, char *name) {
     }
   }
 
+  fprintf(stderr, "Failed to find port '%s' for gate '%s'\n", name, gate->name);
   return NULL;
 }
 
 
-void gate_add_input(gate_t *gate, int i, char name[]) {
+void gate_add_port(gate_t *gate, unsigned int i, char *name, PortType_t type) {
+  char *portname = malloc(BUF_SIZE * sizeof(char));
+
   if (name == NULL) {
     // Set default name
-    name = malloc(11 * sizeof(char));
-    sprintf(name, "I%i", i);
+    sprintf(portname, "%c%i", i, type == PortType_INPUT ? 'I' : 'O');
+  }
+  else {
+    // Copy given name
+    strcpy(portname, name);
   }
 
   // Create port
@@ -35,27 +42,19 @@ void gate_add_input(gate_t *gate, int i, char name[]) {
 }
 
 
-void gate_add_output(gate_t *gate, int i, char *name) {
-  if (name == NULL) {
-    // Set default name
-    name = malloc(11 * sizeof(char));
-    sprintf(name, "O%i", i);
-  }
-
-  // Create port
-  port_t *p = malloc(sizeof(port_t));
-  port_init(p);
-
-  p->name = name;
-  p->gate = gate;
-  p->type = PortType_OUTPUT;
-
-  // Add port
-  vector_push(&gate->ports, p);
+void gate_add_input(gate_t *gate, unsigned int i, char *name) {
+  gate_add_port(gate, i, name, PortType_INPUT);
 }
 
 
-void gate_set_ports(gate_t *gate) {
+void gate_add_output(gate_t *gate, unsigned int i, char *name) {
+  gate_add_port(gate, i, name, PortType_OUTPUT);
+}
+
+
+bool gate_set_ports(gate_t *gate, vector_t *dependencies) {
+  DEBUG;
+
   switch_str(gate->type) {
     case_str("AND") {
       gate_add_input(gate, 0, NULL);
@@ -86,7 +85,52 @@ void gate_set_ports(gate_t *gate) {
       gate_add_input(gate, 0, NULL);
     }
 
-    // TODO: Custom gates
+    else {
+      circuit_t *custom = NULL;
+
+      if (dependencies == NULL) goto no_deps;
+
+      DEBUG;
+
+      //VEC_EACH(*dependencies, circuit_t *dep) {
+      for (size_t i = 0; i < dependencies->amount; i++) {
+        circuit_t *dep = dependencies->items[i];
+
+        if (strcmp(dep->name, gate->type) == 0) {
+          custom = dep;
+          break;
+        }
+      }
+
+      DEBUG;
+
+      if (custom == NULL) {
+        no_deps:
+        fprintf(stderr, "Failed to set ports for gate of type '%s'\n", gate->type);
+        return false;
+      }
+
+      gate_take_gates_from_circuit(gate, custom);
+    }
+  }
+
+  return true;
+}
+
+
+void gate_take_gates_from_circuit(gate_t *gate, circuit_t *circuit) {
+  DEBUG;
+
+  VEC_EACH(circuit->gates, gate_t *g) {
+    switch_str(g->type) {
+      case_str("IN") {
+        gate_add_input(gate, 0, ((port_t *) g->ports.items[0])->name);
+      }
+
+      else case_str("OUT") {
+        gate_add_output(gate, 0, ((port_t *) g->ports.items[0])->name);
+      }
+    }
   }
 }
 
@@ -133,6 +177,11 @@ void gate_update_state(gate_t *gate) {
       port_t *i0 = gate->ports.items[0];
 
       (void) i0;
+    }
+
+
+    else {
+      fprintf(stderr, "Can't update the state of the gate with unknown type '%s'\n", gate->type);
     }
   }
 }

@@ -16,7 +16,7 @@ unsigned int test_full_adder(void) {
   circuit_init(circ);
 
   // Read template
-  assert_true(read_template("tests/full_adder", circ));
+  assert_true(read_template("tests/full_adder", circ, NULL));
 
   // Free everything
   circuit_free(circ);

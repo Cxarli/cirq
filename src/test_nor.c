@@ -16,7 +16,7 @@ unsigned int test_nor(void) {
   circuit_init(circ);
 
   // Read template
-  assert_true(read_template("tests/nor", circ));
+  assert_true(read_template("tests/nor", circ, NULL));
 
   // Get all I/O gates
   port_t *i0 = circuit_get_port_by_name(circ, "832532c7", "O0");

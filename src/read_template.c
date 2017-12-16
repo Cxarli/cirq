@@ -4,7 +4,7 @@
 #include "read_template.h"
 
 
-bool read_template(char *filename, circuit_t *circ) {
+bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
   char buf[BUF_SIZE];
 
   // Open file
@@ -32,9 +32,16 @@ bool read_template(char *filename, circuit_t *circ) {
   for (size_t i = 0; i < amount_gates; i++) {
     char *name = malloc(BUF_SIZE * sizeof(char));
     char *type = malloc(BUF_SIZE * sizeof(char));
+    char *portname = malloc(BUF_SIZE * sizeof(char));
+
+    // example:  5cf6cdaa IN #I0
+    int x = fscanf(file, "%s %s #%s\n", name, type, portname);
 
     // example:  6306ee7f NOT
-    int x = fscanf(file, "%s %s\n", name, type);
+    if (x == 2) {
+      free(portname);
+      portname = NULL;
+    }
 
     if ( x == -1 ) {
       // Unexpected end of file
@@ -50,8 +57,16 @@ bool read_template(char *filename, circuit_t *circ) {
     g->name = name;
     g->type = type;
 
-    gate_set_ports(g);
+    // Set the correct ports
+    gate_set_ports(g, dependencies);
 
+    // Set the custom name if given
+    if (portname != NULL) {
+      // NOTE: Assume gate->type is "IN" or "OUT"
+      ((port_t*) g->ports.items[0])->name = portname;
+    }
+
+    // Add gate to circuit
     vector_push(&circ->gates, g);
   }
 
@@ -101,19 +116,24 @@ bool read_template(char *filename, circuit_t *circ) {
     if (! ok) goto error;
   }
 
-
-  bool success = true;
-  end:
+  DEBUG;
 
   // Make sure all gates are in the right state
   // NOTE: This will crash if a contradicting loop occurs in the program
   //   example: NOT:I0 <---> NOT:O0
   circuit_update_state(circ);
 
+  DEBUG;
+
+
+  bool success = true;
+  end:
+
   // Close template file
   fclose(file);
 
   return success;
+
 
   error:
 

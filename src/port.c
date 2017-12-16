@@ -1,4 +1,5 @@
 #include <stdio.h> // printf
+#include <string.h> // memcpy
 
 #include "port.h"
 

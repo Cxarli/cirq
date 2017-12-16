@@ -16,12 +16,12 @@ unsigned int test_xor(void) {
   circuit_init(circ);
 
   // Read template
-  assert_true(read_template("tests/xor", circ));
+  assert_true(read_template("tests/xor", circ, NULL));
 
   // Get all I/O gates
-  port_t *i0 = circuit_get_port_by_name(circ, "2138e29d", "O0");
-  port_t *i1 = circuit_get_port_by_name(circ, "bf0a3903", "O0");
-  port_t *o0 = circuit_get_port_by_name(circ, "4529cffe", "I0");
+  port_t *i0 = circuit_get_port_by_name(circ, "5cf6cdaa", "I0");
+  port_t *i1 = circuit_get_port_by_name(circ, "3958dd83", "I1");
+  port_t *o0 = circuit_get_port_by_name(circ, "961b5519", "O0");
 
   // Make sure default inputs are false
   assert_eq(port_get_state(i0), false);

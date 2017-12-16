@@ -16,7 +16,7 @@ unsigned int test_nand(void) {
   circuit_init(circ);
 
   // Read template
-  assert_true(read_template("tests/nand", circ));
+  assert_true(read_template("tests/nand", circ, NULL));
 
   // Get all I/O gates
   port_t *i0 = circuit_get_port_by_name(circ, "da2ecd25", "O0");

@@ -16,7 +16,7 @@ unsigned int test_not_loop(void) {
   circuit_init(circ);
 
   // Read template
-  assert_false(read_template("tests/not_loop", circ));
+  assert_false(read_template("tests/not_loop", circ, NULL));
 
   // Free everything
   circuit_free(circ);

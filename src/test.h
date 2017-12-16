@@ -28,7 +28,11 @@
 
 #define TEST(func) { \
   ++tests; \
-  failed_tests += (func() == 0) ? 0 : 1; \
+  unsigned int f = func(); \
+  failed_tests += (f == 0) ? 0 : 1; \
+  if (f == 0) { \
+    printf("[ OK ] " #func "\n"); \
+  } \
 }
 
 #define TEST_START \
@@ -38,7 +42,7 @@
   return fails; \
 
 #define TESTS_START \
-  printf("\n\nStarting tests...\n"); \
+  printf("\nStarting tests...\n\n"); \
   unsigned int tests = 0, failed_tests = 0; \
 
 #define TESTS_RESULT \
@@ -50,6 +54,7 @@ unsigned int test_nor(void);
 unsigned int test_xand(void);
 unsigned int test_xor(void);
 
+unsigned int test_half_adder(void);
 unsigned int test_full_adder(void);
 
 unsigned int test_not_loop(void);
