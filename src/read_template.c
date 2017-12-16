@@ -35,15 +35,15 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     char *portname = malloc(BUF_SIZE * sizeof(char));
 
     // example:  5cf6cdaa IN #I0
-    int x = fscanf(file, "%s %s #%s\n", name, type, portname);
+    int read_arguments = fscanf(file, "%s %s #%s\n", name, type, portname);
 
     // example:  6306ee7f NOT
-    if (x == 2) {
+    if (read_arguments == 2) {
       free(portname);
       portname = NULL;
     }
 
-    if ( x == -1 ) {
+    if ( read_arguments == -1 ) {
       // Unexpected end of file
       fprintf(stderr, "EOF??\n");
       goto error;
@@ -58,13 +58,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     g->type = type;
 
     // Set the correct ports
-    gate_set_ports(g, dependencies);
-
-    // Set the custom name if given
-    if (portname != NULL) {
-      // NOTE: Assume gate->type is "IN" or "OUT"
-      ((port_t*) g->ports.items[0])->name = portname;
-    }
+    gate_set_ports(g, portname, dependencies);
 
     // Add gate to circuit
     vector_push(&circ->gates, g);

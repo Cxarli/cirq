@@ -18,15 +18,10 @@ port_t *gate_get_port_by_name(gate_t *gate, char *name) {
 
 
 void gate_add_port(gate_t *gate, unsigned int i, char *name, PortType_t type) {
-  char *portname = malloc(BUF_SIZE * sizeof(char));
-
   if (name == NULL) {
     // Set default name
-    sprintf(portname, "%c%i", i, type == PortType_INPUT ? 'I' : 'O');
-  }
-  else {
-    // Copy given name
-    strcpy(portname, name);
+    name = malloc(BUF_SIZE * sizeof(char));
+    sprintf(name, "%c%i", i, type == PortType_INPUT ? 'I' : 'O');
   }
 
   // Create port
@@ -52,7 +47,7 @@ void gate_add_output(gate_t *gate, unsigned int i, char *name) {
 }
 
 
-bool gate_set_ports(gate_t *gate, vector_t *dependencies) {
+bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
   DEBUG;
 
   switch_str(gate->type) {
@@ -77,12 +72,12 @@ bool gate_set_ports(gate_t *gate, vector_t *dependencies) {
 
 
     else case_str("IN") {
-      gate_add_output(gate, 0, NULL);
+      gate_add_output(gate, 0, portname);
     }
 
 
     else case_str("OUT") {
-      gate_add_input(gate, 0, NULL);
+      gate_add_input(gate, 0, portname);
     }
 
     else {
@@ -122,13 +117,28 @@ void gate_take_gates_from_circuit(gate_t *gate, circuit_t *circuit) {
   DEBUG;
 
   VEC_EACH(circuit->gates, gate_t *g) {
+    char *newportname = NULL;
+
+    if (g->ports.items[0] != NULL) {
+      // Get old name
+      char *portname = ((port_t *) g->ports.items[0])->name;
+
+      // Copy
+      newportname = malloc(sizeof(portname) * sizeof(char));
+      strcpy(newportname, portname);
+    }
+
     switch_str(g->type) {
       case_str("IN") {
-        gate_add_input(gate, 0, ((port_t *) g->ports.items[0])->name);
+        gate_add_input(gate, 0, newportname);
       }
 
       else case_str("OUT") {
-        gate_add_output(gate, 0, ((port_t *) g->ports.items[0])->name);
+        gate_add_input(gate, 0, newportname);
+      }
+
+      else {
+        if (newportname) free(newportname);
       }
     }
   }

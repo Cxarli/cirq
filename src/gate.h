@@ -22,7 +22,7 @@ typedef struct gate {
 void gate_add_port(gate_t *gate, unsigned int i, char *X_name, PortType_t type);
 void gate_add_input(gate_t *gate, unsigned int i, char *name);
 void gate_add_output(gate_t *gate, unsigned int i, char *name);
-bool gate_set_ports(gate_t *gate, vector_t *dependencies);
+bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies);
 void gate_take_gates_from_circuit(gate_t *gate, circuit_t *circuit);
 void gate_update_state(gate_t *gate);
 port_t *gate_get_port_by_name(gate_t *gate, char *name);
