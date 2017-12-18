@@ -1,7 +1,5 @@
-#include <string.h> // strcmp
-
 #include "test.h"
-#include "defines.h"
+#include "defines.h" // switch_str, case_str
 
 
 int main(int argc, char *argv[]) {

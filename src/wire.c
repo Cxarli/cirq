@@ -1,18 +1,14 @@
-#include <stdio.h> // printf
-#include <stdlib.h> // free
-
 #include "wire.h"
 
-#include "defines.h"
+#include <stdlib.h>
+
+#include "assert.h"
 
 
 void wire_print(wire_t *wire) {
+  assert_neq(wire, NULL);
+
   printf("%s:%s <---> %s:%s", wire->leftuuid, wire->leftport, wire->rightuuid, wire->rightport);
-}
-
-
-void wire_print_err(wire_t *wire) {
-  fprintf(stderr, "%s:%s <---> %s:%s", wire->leftuuid, wire->leftport, wire->rightuuid, wire->rightport);
 }
 
 

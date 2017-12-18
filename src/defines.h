@@ -1,6 +1,10 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#include <stdio.h>
+#include <string.h>
+
+
 #define BUF_SIZE 256
 
 #define DEBUG

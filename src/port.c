@@ -1,31 +1,36 @@
-#include <stdio.h> // printf
-#include <string.h> // memcpy
-
 #include "port.h"
 
-#include "bool.h" // bool_print
-#include "gate.h" // gate_t
+#include "bool.h"
+#include "gate.h"
+#include "assert.h"
 
 
-void port_update_state(port_t *port) {
+bool port_update_state(port_t *port) {
+  assert_neq(port, NULL);
+
+  bool success = true;
+
   if (port->type == PortType_INPUT) {
-    gate_update_state(port->gate);
+    success = gate_update_state(port->gate);
   }
   else {
     // If port is an output, copy state to other inputs
     VEC_EACH(port->connections, port_t *connection) {
       if (connection->type == PortType_INPUT) {
         connection->state = port->state;
-        port_update_state(connection);
+
+        success &= port_update_state(connection);
       }
     }
   }
+
+  return success;
 }
 
 
-void port_set_state(port_t *port, bool state) {
+bool port_set_state(port_t *port, bool state) {
   port->state = state;
-  port_update_state(port);
+  return port_update_state(port);
 }
 
 

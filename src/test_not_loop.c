@@ -1,10 +1,4 @@
-#include <stdio.h>
-
 #include "read_template.h"
-#include "circuit.h"
-#include "vector.h"
-#include "gate.h"
-#include "wire.h"
 #include "test.h"
 
 

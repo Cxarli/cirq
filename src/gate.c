@@ -1,12 +1,16 @@
-#include <stdio.h> // printf
-#include <string.h> // strcmp
-
 #include "gate.h"
+
 #include "circuit.h"
+#include "assert.h"
 
 
 port_t *gate_get_port_by_name(gate_t *gate, char *name) {
+  assert_neq(gate, NULL);
+  assert_neq(name, NULL);
+
   VEC_EACH(gate->ports, port_t *port) {
+    assert_neq(port, NULL);
+
     if (strcmp(port->name, name) == 0) {
       return port;
     }
@@ -18,6 +22,8 @@ port_t *gate_get_port_by_name(gate_t *gate, char *name) {
 
 
 void gate_add_port(gate_t *gate, unsigned int i, char *name, PortType_t type) {
+  assert_neq(gate, NULL);
+
   if (name == NULL) {
     // Set default name
     name = malloc(BUF_SIZE * sizeof(char));
@@ -51,6 +57,8 @@ void gate_add_output(gate_t *gate, unsigned int i, char *name) {
 
 
 bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
+  assert_neq(gate, NULL);
+
   DEBUG;
 
   switch_str(gate->type) {
@@ -58,6 +66,7 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
       gate_add_input(gate, 0, NULL);
       gate_add_input(gate, 1, NULL);
       gate_add_output(gate, 0, NULL);
+      return true;
     }
 
 
@@ -65,22 +74,26 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
       gate_add_input(gate, 0, NULL);
       gate_add_input(gate, 1, NULL);
       gate_add_output(gate, 0, NULL);
+      return true;
     }
 
 
     else case_str("NOT") {
       gate_add_input(gate, 0, NULL);
       gate_add_output(gate, 0, NULL);
+      return true;
     }
 
 
     else case_str("IN") {
       gate_add_output(gate, 0, portname);
+      return true;
     }
 
 
     else case_str("OUT") {
       gate_add_input(gate, 0, portname);
+      return true;
     }
 
     else {
@@ -88,9 +101,6 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
 
       if (dependencies == NULL) goto no_deps;
 
-      DEBUG;
-
-      //VEC_EACH(*dependencies, circuit_t *dep) {
       for (size_t i = 0; i < dependencies->amount; i++) {
         circuit_t *dep = dependencies->items[i];
 
@@ -100,7 +110,6 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
         }
       }
 
-      DEBUG;
 
       if (custom == NULL) {
         no_deps:
@@ -108,28 +117,36 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
         return false;
       }
 
-      gate_take_gates_from_circuit(gate, custom);
+      return gate_take_gates_from_circuit(gate, custom);
     }
   }
 
-  return true;
+  return false;
 }
 
 
-void gate_take_gates_from_circuit(gate_t *gate, circuit_t *circuit) {
+bool gate_take_gates_from_circuit(gate_t *gate, circuit_t *circuit) {
+  assert_neq(gate, NULL);
+  assert_neq(circuit, NULL);
+
   DEBUG;
 
   VEC_EACH(circuit->gates, gate_t *g) {
+    assert_neq(g, NULL);
+
     char *newportname = NULL;
 
     if (g->ports.items[0] != NULL) {
       // Get old name
       char *portname = ((port_t *) g->ports.items[0])->name;
 
+      assert_neq(portname, NULL);
+
       // Copy
       newportname = malloc(sizeof(portname) * sizeof(char));
       strcpy(newportname, portname);
     }
+
 
     switch_str(g->type) {
       case_str("IN") {
@@ -145,18 +162,24 @@ void gate_take_gates_from_circuit(gate_t *gate, circuit_t *circuit) {
       }
     }
   }
+
+  return true;
 }
 
 
-void gate_update_state(gate_t *gate) {
+bool gate_update_state(gate_t *gate) {
   switch_str(gate->type) {
     case_str("AND") {
       port_t *i0 = gate->ports.items[0];
       port_t *i1 = gate->ports.items[1];
       port_t *o0 = gate->ports.items[2];
 
+      assert_eq(i0->type, PortType_INPUT);
+      assert_eq(i1->type, PortType_INPUT);
+      assert_eq(o0->type, PortType_OUTPUT);
+
       o0->state = i0->state && i1->state;
-      port_update_state(o0);
+      return port_update_state(o0);
     }
 
 
@@ -165,8 +188,12 @@ void gate_update_state(gate_t *gate) {
       port_t *i1 = gate->ports.items[1];
       port_t *o0 = gate->ports.items[2];
 
+      assert_eq(i0->type, PortType_INPUT);
+      assert_eq(i1->type, PortType_INPUT);
+      assert_eq(o0->type, PortType_OUTPUT);
+
       o0->state = i0->state || i1->state;
-      port_update_state(o0);
+      return port_update_state(o0);
     }
 
 
@@ -174,29 +201,37 @@ void gate_update_state(gate_t *gate) {
       port_t *i0 = gate->ports.items[0];
       port_t *o0 = gate->ports.items[1];
 
+      assert_eq(i0->type, PortType_INPUT);
+      assert_eq(o0->type, PortType_OUTPUT);
+
       o0->state = ! i0->state;
-      port_update_state(o0);
+      return port_update_state(o0);
     }
 
 
     else case_str("IN") {
       port_t *o0 = gate->ports.items[0];
 
-      (void) o0;
+      assert_eq(o0->type, PortType_OUTPUT);
+      return true;
     }
 
 
     else case_str("OUT") {
       port_t *i0 = gate->ports.items[0];
 
-      (void) i0;
+      assert_eq(i0->type, PortType_INPUT);
+      return true;
     }
 
 
     else {
       fprintf(stderr, "Can't update the state of the gate with unknown type '%s'\n", gate->type);
+      return false;
     }
   }
+
+  return false;
 }
 
 

@@ -1,14 +1,17 @@
-#include <stdio.h> // FILE, fopen, fclose, fscanf, fprintf, printf
-#include <string.h> // strcmp
-
 #include "read_template.h"
+
+#include "assert.h"
 
 
 bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
+  assert_neq(filename, NULL);
+  assert_neq(circ, NULL);
+
   char buf[BUF_SIZE];
 
   // Open file
   FILE *file = fopen(filename, "r");
+  assert_neq(file, NULL);
 
   // Get name, which is always the first thing in a file
   // example: NAND
@@ -24,7 +27,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
   if ( strcmp(buf, "[gates]") != 0 ) {
     fprintf(stderr, "no [gates]?? '%s' unexpected\n", buf);
-    goto error;
+    assert(false);
   }
 
   DEBUG;
@@ -46,7 +49,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     if ( read_arguments == -1 ) {
       // Unexpected end of file
       fprintf(stderr, "EOF??\n");
-      goto error;
+      assert(false);
     }
 
     // New gate
@@ -58,7 +61,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     g->type = type;
 
     // Set the correct ports
-    gate_set_ports(g, portname, dependencies);
+    assert(gate_set_ports(g, portname, dependencies));
 
     // Add gate to circuit
     vector_push(&circ->gates, g);
@@ -73,7 +76,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
   if ( strcmp(buf, "[wires]") != 0 ) {
     fprintf(stderr, "no [wires]?? '%s' unexpected\n", buf);
-    goto error;
+    assert(false);
   }
 
   DEBUG;
@@ -90,7 +93,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     if ( x == -1 ) {
       // Unexpected end of file
       fprintf(stderr, "EOF??\n");
-      goto error;
+      assert(false);
     }
 
     // Create new wire
@@ -102,35 +105,18 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     w->rightuuid = rightuuid;
     w->rightport = rightport;
 
-    bool ok = circuit_apply_wire(circ, w);
+    assert(circuit_apply_wire(circ, w));
 
     wire_free(w);
     free(w);
-
-    if (! ok) goto error;
   }
-
-  DEBUG;
-
-  // Make sure all gates are in the right state
-  // NOTE: This will crash if a contradicting loop occurs in the program
-  //   example: NOT:I0 <---> NOT:O0
-  circuit_update_state(circ);
-
-  DEBUG;
-
-
-  bool success = true;
-  end:
 
   // Close template file
   fclose(file);
 
-  return success;
 
-
-  error:
-
-  success = false;
-  goto end;
+  // Make sure all gates are in the right state
+  // NOTE: This will crash if a contradicting loop occurs in the program
+  //   example: NOT:I0 <---> NOT:O0
+  return circuit_update_state(circ);
 }
