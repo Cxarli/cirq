@@ -7,8 +7,12 @@
 #include <signal.h>
 
 
-#define panic(str) { \
-  fprintf(stderr, "[" __FILE__ ":%i] %s (%i)\n", __LINE__, str, errno); \
+#define warn(fmt, VARGS...) \
+  fprintf(stderr, "[" __FILE__ ":%i] " fmt "\n", __LINE__, ##VARGS);
+
+
+#define panic(fmt, VARGS...) { \
+  fprintf(stderr, "[" __FILE__ ":%i] " fmt " (E%i)\n", __LINE__, ##VARGS, errno); \
   /* Force crash with stacktrace: */ \
   raise(SIGSEGV); \
 }

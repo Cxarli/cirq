@@ -26,8 +26,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
   fscanf(file, "%s %lu\n", buf, &amount_gates);
 
   if ( strcmp(buf, "[gates]") != 0 ) {
-    fprintf(stderr, "no [gates]?? '%s' unexpected\n", buf);
-    assert(false);
+    panic("no [gates]?? '%s' unexpected", buf);
   }
 
 
@@ -49,8 +48,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
     if ( read_arguments == -1 ) {
       // Unexpected end of file
-      fprintf(stderr, "EOF??\n");
-      assert(false);
+      panic("EOF??");
     }
 
     // New gate
@@ -76,8 +74,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
   fscanf(file, "%s %lu\n", buf, &amount_wires);
 
   if ( strcmp(buf, "[wires]") != 0 ) {
-    fprintf(stderr, "no [wires]?? '%s' unexpected\n", buf);
-    assert(false);
+    panic("no [wires]?? '%s' unexpected", buf);
   }
 
   for (size_t i = 0; i < amount_wires; i++) {
@@ -91,8 +88,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
     if ( x == -1 ) {
       // Unexpected end of file
-      fprintf(stderr, "EOF??\n");
-      assert(false);
+      panic("EOF??");
     }
 
     // Create new wire

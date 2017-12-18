@@ -3,8 +3,8 @@ half_adder
 [gates] 6
 a5987c34 IN #I0
 03808f52 IN #I1
-382da1d0 OUT #S
 811b6b1b OUT #C
+382da1d0 OUT #S
 18286b9b XOR
 f66e7062 AND
 

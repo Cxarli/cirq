@@ -79,7 +79,7 @@ gate_t *circuit_get_gate_by_name(circuit_t *circ, char *name) {
     }
   }
 
-  fprintf(stderr, "Failed to find gate '%s'\n", name);
+  warn("Failed to find gate '%s'", name);
   return NULL;
 }
 
@@ -94,6 +94,30 @@ port_t *circuit_get_port_by_name(circuit_t *circ, char *gatename, char *portname
   assert_neq(gate, NULL);
 
   return gate_get_port_by_name(gate, portname);
+}
+
+
+port_t *circuit_get_io_port_by_name(circuit_t *circ, char *portname) {
+  assert_neq(circ, NULL);
+  assert_neq(portname, NULL);
+
+  VEC_EACH(circ->gates, gate_t *gate) {
+    assert_neq(gate, NULL);
+
+    // Filter on I/O ports only
+    if (! gate_is_io(gate)) {
+      continue;
+    }
+
+    // Check portname
+    port_t *port = gate->ports.items[0];
+
+    if (strcmp(port->name, portname) == 0)
+      return port;
+  }
+
+  warn("Failed to find I/O port '%s' for circuit '%s'", portname, circ->name);
+  return NULL;
 }
 
 

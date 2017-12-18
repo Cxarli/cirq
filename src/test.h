@@ -7,8 +7,8 @@
 
 
 #define failstr(x) { \
-  ++fails; \
-  fprintf(stderr, "[FAIL] " x "\n"); \
+  ++__fails; \
+  fprintf(stderr, "[FAIL] %s:%i    %s\n", __FILE__, __LINE__, x); \
 }
 
 
@@ -18,12 +18,12 @@
 
 #define assert_true(x) \
   if (! (x)) \
-    failstr(#x " is not true");
+    failstr(#x " != true");
 
 
 #define assert_false(x) \
   if ((x)) \
-    failstr(#x " is not false");
+    failstr(#x " != false");
 
 
 #define assert_eq(x, y) \
@@ -37,30 +37,32 @@
 
 
 #define TEST(func) { \
-  ++tests; \
-  unsigned int f = func(); \
-  failed_tests += (f == 0) ? 0 : 1; \
-  if (f == 0) { \
+  ++__tests; \
+  \
+  unsigned int __fails = func(); \
+  if (__fails != 0) ++__failed_tests; \
+  \
+  if (__fails == 0) { \
     printf("[ OK ] " #func "\n"); \
   } \
 }
 
 
 #define TEST_START \
-  unsigned int fails = 0; \
+  unsigned int __fails = 0; \
 
 
 #define TEST_END \
-  return fails; \
+  return __fails; \
 
 
 #define TESTS_START \
   printf("\nStarting tests...\n\n"); \
-  unsigned int tests = 0, failed_tests = 0; \
+  unsigned int __tests = 0, __failed_tests = 0; \
 
 
 #define TESTS_RESULT \
-  printf("\n\nTests done. %i / %i success\n", tests - failed_tests, tests); \
+  printf("\n\nTests done. %i / %i success\n", __tests - __failed_tests, __tests); \
 
 
 unsigned int test_nand(void);

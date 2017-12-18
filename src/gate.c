@@ -16,7 +16,7 @@ port_t *gate_get_port_by_name(gate_t *gate, char *name) {
     }
   }
 
-  fprintf(stderr, "Failed to find port '%s' for gate '%s'\n", name, gate->name);
+  warn("Failed to find port '%s' for gate '%s'", name, gate->name);
   return NULL;
 }
 
@@ -111,10 +111,15 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
 
       if (custom == NULL) {
         no_deps:
-        fprintf(stderr, "Failed to set ports for gate of type '%s'\n", gate->type);
+        warn("Failed to set ports for gate of type '%s'", gate->type);
         return false;
       }
 
+      // Copy circuit to inner circuit
+      gate->inner_circuit = malloc(sizeof(circuit_t));
+      memcpy(gate->inner_circuit, custom, sizeof(circuit_t));
+
+      // Take gates from circuit
       return gate_take_gates_from_circuit(gate, custom);
     }
   }
@@ -127,22 +132,22 @@ bool gate_take_gates_from_circuit(gate_t *gate, circuit_t *circuit) {
   assert_neq(gate, NULL);
   assert_neq(circuit, NULL);
 
+
   VEC_EACH(circuit->gates, gate_t *g) {
     assert_neq(g, NULL);
 
     char *newportname = NULL;
 
-    if ( ! (strcmp(g->type, "IN") == 0 || strcmp(g->type, "OUT") == 0) ) {
-      // Skip if it's not an I/O port
+    if ( ! gate_is_io(g) ) {
       continue;
     }
 
-    // Get old name
+    // Get old portname
     char *portname = ((port_t *) g->ports.items[0])->name;
 
     assert_neq(portname, NULL);
 
-    // Copy
+    // Copy portname
     newportname = malloc(sizeof(portname) * sizeof(char));
     strcpy(newportname, portname);
 
@@ -221,12 +226,44 @@ bool gate_update_state(gate_t *gate) {
 
 
     else {
-      fprintf(stderr, "Can't update the state of the gate with unknown type '%s'\n", gate->type);
-      return false;
+      if (gate->inner_circuit == NULL) {
+        warn("Can't update the state of the gate with unknown type '%s'", gate->type);
+        return false;
+      }
+
+      // Transfer gate state to inner circuit state
+      VEC_EACH(gate->ports, port_t *port) {
+        port_t *inner_port = circuit_get_io_port_by_name(gate->inner_circuit, port->name);
+        port_set_state(inner_port, port->state);
+      }
+
+      // Update inner circuit
+      bool success = circuit_update_state(gate->inner_circuit);
+
+      // Mirror inner circuit output to outer circuit
+      VEC_EACH(gate->inner_circuit->gates, gate_t *inner_gate) {
+        // Filter on output only
+        if (strcmp(inner_gate->type, "OUT") != 0) {
+          continue;
+        }
+
+        port_t *inner_port = inner_gate->ports.items[0];
+        port_t *outer_port = gate_get_port_by_name(gate, inner_port->name);
+
+        success &= port_set_state(outer_port, inner_port->state);
+      }
+
+
+      return success;
     }
   }
 
   return false;
+}
+
+
+bool gate_is_io(gate_t *gate) {
+  return strcmp(gate->type, "IN") == 0 || strcmp(gate->type, "OUT") == 0;
 }
 
 
@@ -239,12 +276,18 @@ void gate_print(gate_t *gate) {
     port_print(p);
     printf("\n");
   }
+
+  if (gate->inner_circuit != NULL) {
+    printf("INNER:\n");
+    circuit_print(gate->inner_circuit);
+  }
 }
 
 
 void gate_init(gate_t *gate) {
   gate->name = NULL;
   gate->type = NULL;
+  gate->inner_circuit = NULL;
 
   vector_init(&gate->ports, BUF_SIZE);
 }
@@ -253,6 +296,7 @@ void gate_init(gate_t *gate) {
 void gate_free(gate_t *gate) {
   if (gate->name) free(gate->name);
   if (gate->type) free(gate->type);
+  if (gate->inner_circuit) free(gate->inner_circuit);
 
   // Free all ports
   VEC_EACH(gate->ports, port_t* p) {
