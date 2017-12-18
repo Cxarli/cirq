@@ -21,8 +21,11 @@ void gate_add_port(gate_t *gate, unsigned int i, char *name, PortType_t type) {
   if (name == NULL) {
     // Set default name
     name = malloc(BUF_SIZE * sizeof(char));
-    sprintf(name, "%c%i", i, type == PortType_INPUT ? 'I' : 'O');
+
+    char typechar = (type == PortType_INPUT) ? 'I' : 'O';
+    sprintf(name, "%c%i", typechar, i);
   }
+
 
   // Create port
   port_t *p = malloc(sizeof(port_t));
@@ -30,7 +33,7 @@ void gate_add_port(gate_t *gate, unsigned int i, char *name, PortType_t type) {
 
   p->name = name;
   p->gate = gate;
-  p->type = PortType_INPUT;
+  p->type = type;
 
   // Add port
   vector_push(&gate->ports, p);
