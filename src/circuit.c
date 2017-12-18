@@ -79,7 +79,7 @@ gate_t *circuit_get_gate_by_name(circuit_t *circ, char *name) {
     }
   }
 
-  warn("Failed to find gate '%s'", name);
+  warn("Failed to find gate '%s' in circuit '%s'", name, circ->name);
   return NULL;
 }
 

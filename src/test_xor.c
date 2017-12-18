@@ -2,7 +2,7 @@
 #include "test.h"
 
 
-unsigned int test_xor(void) {
+test_result_t test_xor(void) {
   TEST_START;
 
   // Create circuit

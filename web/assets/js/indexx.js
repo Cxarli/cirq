@@ -196,7 +196,7 @@ function generateFile(json) {
     6306ee7f:O0 2aedae8e:I0
   */
 
-  // TODO: Explicitly state the circuit's in- and output ports and their names
+  // TODO: Explicitly state the circuit's in- and output names
 
   output += json.name + "\n";
 

@@ -2,7 +2,7 @@
 #include "test.h"
 
 
-unsigned int test_half_adder(void) {
+test_result_t test_half_adder(void) {
   TEST_START;
 
   // Create circuit

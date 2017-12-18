@@ -6,8 +6,14 @@
 #include <stdbool.h>
 
 
+typedef struct test_result {
+  unsigned int fails;
+  unsigned int total;
+} test_result_t;
+
+
 #define failstr(x) { \
-  ++__fails; \
+  ++__test.fails; \
   fprintf(stderr, "[FAIL] %s:%i    %s\n", __FILE__, __LINE__, x); \
 }
 
@@ -16,44 +22,43 @@
   failstr("EXPLICITLY");
 
 
-#define assert_true(x) \
+#define assert(x, str) \
+  ++__test.total; \
   if (! (x)) \
-    failstr(#x " != true");
+    failstr(str);
 
+
+#define assert_true(x) \
+  assert((x), #x " != true")
 
 #define assert_false(x) \
-  if ((x)) \
-    failstr(#x " != false");
-
+  assert(!(x), #x " != false")
 
 #define assert_eq(x, y) \
-  if ((x) != (y)) \
-    failstr(#x " != " #y);
-
+  assert((x) == (y), #x " != " #y)
 
 #define assert_neq(x, y) \
-  if ((x) == (y)) \
-    failstr(#x " == " #y);
-
-
-#define TEST(func) { \
-  ++__tests; \
-  \
-  unsigned int __fails = func(); \
-  if (__fails != 0) ++__failed_tests; \
-  \
-  if (__fails == 0) { \
-    printf("[ OK ] " #func "\n"); \
-  } \
-}
+  assert((x) != (y), #x " == " #y)
 
 
 #define TEST_START \
-  unsigned int __fails = 0; \
+  test_result_t __test = { .total = 0, .fails = 0 }; \
 
 
 #define TEST_END \
-  return __fails; \
+  return __test;
+
+
+
+#define TEST(func) { \
+  test_result_t __result = func(); \
+  __failed_tests += __result.fails; \
+  __tests += __result.total; \
+  \
+  if (__result.fails == 0) { \
+    printf("[ OK ] " #func "\n"); \
+  } \
+}
 
 
 #define TESTS_START \
@@ -62,18 +67,19 @@
 
 
 #define TESTS_RESULT \
-  printf("\n\nTests done. %i / %i success\n", __tests - __failed_tests, __tests); \
+  printf("\n\nTests done. %i / %i tests successful\n", __tests - __failed_tests, __tests); \
 
 
-unsigned int test_nand(void);
-unsigned int test_nor(void);
-unsigned int test_xand(void);
-unsigned int test_xor(void);
 
-unsigned int test_half_adder(void);
-unsigned int test_full_adder(void);
+test_result_t test_nand(void);
+test_result_t test_nor(void);
+test_result_t test_xand(void);
+test_result_t test_xor(void);
 
-unsigned int test_not_loop(void);
+test_result_t test_half_adder(void);
+test_result_t test_full_adder(void);
+
+test_result_t test_not_loop(void);
 
 
 #endif

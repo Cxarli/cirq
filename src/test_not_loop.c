@@ -2,7 +2,7 @@
 #include "test.h"
 
 
-unsigned int test_not_loop(void) {
+test_result_t test_not_loop(void) {
   TEST_START;
 
   // Create circuit

@@ -7,15 +7,13 @@ int main(int argc, char *argv[]) {
 
   // If no tests specified, run some default tests
   if (argc == 1) {
+    TEST(test_nand);
+    TEST(test_nor);
+    TEST(test_xand);
     TEST(test_xor);
-    TEST(test_half_adder);
 
-    /*
-      TEST(test_nand);
-      TEST(test_nor);
-      TEST(test_xand);
-      TEST(test_xor);
-    */
+    TEST(test_half_adder);
+    TEST(test_full_adder);
   }
 
 

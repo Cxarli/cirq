@@ -2,7 +2,7 @@
 #include "test.h"
 
 
-unsigned int test_nand(void) {
+test_result_t test_nand(void) {
   TEST_START;
 
   // Create circuit
