@@ -42,7 +42,7 @@ void gate_add_port(gate_t *gate, unsigned int i, char *name, PortType_t type) {
   p->type = type;
 
   // Add port
-  vector_push(&gate->ports, p);
+  assert(vector_push(&gate->ports, p));
 }
 
 
@@ -58,8 +58,6 @@ void gate_add_output(gate_t *gate, unsigned int i, char *name) {
 
 bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
   assert_neq(gate, NULL);
-
-  DEBUG;
 
   switch_str(gate->type) {
     case_str("AND") {
@@ -129,36 +127,33 @@ bool gate_take_gates_from_circuit(gate_t *gate, circuit_t *circuit) {
   assert_neq(gate, NULL);
   assert_neq(circuit, NULL);
 
-  DEBUG;
-
   VEC_EACH(circuit->gates, gate_t *g) {
     assert_neq(g, NULL);
 
     char *newportname = NULL;
 
-    if (g->ports.items[0] != NULL) {
-      // Get old name
-      char *portname = ((port_t *) g->ports.items[0])->name;
-
-      assert_neq(portname, NULL);
-
-      // Copy
-      newportname = malloc(sizeof(portname) * sizeof(char));
-      strcpy(newportname, portname);
+    if ( ! (strcmp(g->type, "IN") == 0 || strcmp(g->type, "OUT") == 0) ) {
+      // Skip if it's not an I/O port
+      continue;
     }
 
+    // Get old name
+    char *portname = ((port_t *) g->ports.items[0])->name;
+
+    assert_neq(portname, NULL);
+
+    // Copy
+    newportname = malloc(sizeof(portname) * sizeof(char));
+    strcpy(newportname, portname);
 
     switch_str(g->type) {
       case_str("IN") {
         gate_add_input(gate, 0, newportname);
       }
 
-      else case_str("OUT") {
-        gate_add_input(gate, 0, newportname);
-      }
-
+      // There is only one other option: OUT
       else {
-        if (newportname) free(newportname);
+        gate_add_output(gate, 0, newportname);
       }
     }
   }

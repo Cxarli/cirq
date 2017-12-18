@@ -42,12 +42,23 @@ bool port_get_state(port_t *port) {
 void port_print(port_t *port) {
   printf("    :%s (", port->name);
   bool_print(port->state);
-  printf(") --> ");
+  printf(")");
+
+  // Print an arrow when it has a connection only
+  if (port->connections.amount > 0) {
+    printf(" --> ");
+  }
 
   // Print the connections
-  VEC_EACH(port->connections, port_t *connection) {
+  VEC_EACH_INDEX(port->connections, port_t *connection, i) {
     char *gatename = connection->gate->name;
-    printf("%s:%s%s", gatename, connection->name, __last ? "" : ", ");
+
+    printf("%s:%s", gatename, connection->name);
+
+    // Not the last item
+    if (i < port->connections.amount - 1) {
+      printf(", ");
+    }
   }
 }
 

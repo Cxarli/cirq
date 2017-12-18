@@ -18,15 +18,11 @@ unsigned int test_half_adder(void) {
   // Read XOR circuit
   assert_true(read_template("tests/xor", &xor_circ, NULL));
 
-  DEBUG;
-
   // Add XOR circuit to deps tree
-  vector_push(&deps, &xor_circ);
+  assert_true(vector_push(&deps, &xor_circ));
 
   // Read Half-Adder circuit
   assert_true(read_template("tests/half_adder", &ha_circ, &deps));
-
-  DEBUG;
 
   // ... Do fun things
 

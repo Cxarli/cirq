@@ -45,8 +45,8 @@ bool circuit_apply_wire(circuit_t *circ, wire_t *wire) {
   }
 
   // Add connection
-  vector_push(&left_port->connections, right_port);
-  vector_push(&right_port->connections, left_port);
+  assert(vector_push(&left_port->connections, right_port));
+  assert(vector_push(&right_port->connections, left_port));
 
   return true;
 }

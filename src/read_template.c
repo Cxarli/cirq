@@ -30,16 +30,17 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     assert(false);
   }
 
-  DEBUG;
 
   for (size_t i = 0; i < amount_gates; i++) {
     char *name = malloc(BUF_SIZE * sizeof(char));
     char *type = malloc(BUF_SIZE * sizeof(char));
     char *portname = malloc(BUF_SIZE * sizeof(char));
 
+    // Get data
     // example:  5cf6cdaa IN #I0
     int read_arguments = fscanf(file, "%s %s #%s\n", name, type, portname);
 
+    // If no portname is read, free it
     // example:  6306ee7f NOT
     if (read_arguments == 2) {
       free(portname);
@@ -64,7 +65,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     assert(gate_set_ports(g, portname, dependencies));
 
     // Add gate to circuit
-    vector_push(&circ->gates, g);
+    assert(vector_push(&circ->gates, g));
   }
 
 
@@ -78,8 +79,6 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     fprintf(stderr, "no [wires]?? '%s' unexpected\n", buf);
     assert(false);
   }
-
-  DEBUG;
 
   for (size_t i = 0; i < amount_wires; i++) {
     char *leftuuid = malloc(BUF_SIZE * sizeof(char));
