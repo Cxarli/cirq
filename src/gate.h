@@ -9,11 +9,11 @@ typedef struct circuit circuit_t;
 
 
 typedef struct gate {
-  char *name;
-  char *type;
+	char *name;
+	char *type;
 
-  vector_t ports;
-  circuit_t *inner_circuit;
+	vector_t ports;
+	circuit_t *inner_circuit;
 } gate_t;
 
 

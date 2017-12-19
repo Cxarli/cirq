@@ -7,8 +7,8 @@
 
 
 typedef struct circuit {
-  char *name;
-  vector_t gates;
+	char *name;
+	vector_t gates;
 } circuit_t;
 
 

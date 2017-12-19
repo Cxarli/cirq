@@ -8,33 +8,33 @@
 
 
 #define warn(fmt, VARGS...) \
-  fprintf(stderr, "[" __FILE__ ":%i] " fmt "\n", __LINE__, ##VARGS);
+	fprintf(stderr, "[" __FILE__ ":%i] " fmt "\n", __LINE__, ##VARGS);
 
 
 #define panic(fmt, VARGS...) { \
-  fprintf(stderr, "[" __FILE__ ":%i] " fmt " (E%i)\n", __LINE__, ##VARGS, errno); \
-  /* Force crash with stacktrace: */ \
-  raise(SIGSEGV); \
+	fprintf(stderr, "[" __FILE__ ":%i] " fmt " (E%i)\n", __LINE__, ##VARGS, errno); \
+	/* Force crash with stacktrace: */ \
+	raise(SIGSEGV); \
 }
 
 
 #define assert(x) \
-  if (! (x)) \
-    panic(#x " is not true");
+	if (! (x)) \
+		panic(#x " is not true");
 
 #define assert_not_null(x) \
-  if (x == NULL) \
-    panic(#x " is NULL");
+	if (x == NULL) \
+		panic(#x " is NULL");
 
 
 #define assert_eq(x, y) \
-  if ((x) != (y)) \
-    panic(#x " != " #y);
+	if ((x) != (y)) \
+		panic(#x " != " #y);
 
 
 #define assert_neq(x, y) \
-  if ((x) == (y)) \
-    panic(#x " == " #y);
+	if ((x) == (y)) \
+		panic(#x " == " #y);
 
 
 #endif
