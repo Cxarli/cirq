@@ -1,8 +1,11 @@
+#include "benchmark.h"
 #include "test.h"
 #include "defines.h"
 
 
 int main(int argc, char *argv[]) {
+	FUNC_START();
+
 	TESTS_START;
 
 	// If no tests specified, run some default tests

@@ -2,9 +2,12 @@
 
 #include "utils.h"
 #include "assert.h"
+#include "benchmark.h"
 
 
 bool circuit_apply_wire(circuit_t *circ, wire_t *wire) {
+	FUNC_START();
+
 	assert_not_null(circ);
 	assert_not_null(wire);
 
@@ -43,6 +46,7 @@ bool circuit_apply_wire(circuit_t *circ, wire_t *wire) {
 		printf("\n");
 
 		RESET_STDOUT();
+		FUNC_END();
 		return false;
 	}
 
@@ -52,11 +56,14 @@ bool circuit_apply_wire(circuit_t *circ, wire_t *wire) {
 	assert(vector_push(&right_port->connections, left_port));
 
 
+	FUNC_END();
 	return true;
 }
 
 
 bool circuit_update_state(circuit_t *circ) {
+	FUNC_START();
+
 	assert_not_null(circ);
 
 	bool success = true;
@@ -64,14 +71,19 @@ bool circuit_update_state(circuit_t *circ) {
 	VEC_EACH(circ->gates, gate_t *gate) {
 		assert_not_null(gate);
 
+		FUNC_PAUSE();
 		success &= gate_update_state(gate);
+		FUNC_RESUME();
 	}
 
+	FUNC_END();
 	return success;
 }
 
 
 gate_t *circuit_get_gate_by_name(circuit_t *circ, char *name) {
+	FUNC_START();
+
 	assert_not_null(circ);
 	assert_not_null(name);
 
@@ -80,30 +92,42 @@ gate_t *circuit_get_gate_by_name(circuit_t *circ, char *name) {
 		assert_not_null(gate);
 
 		if (strcmp(gate->name, name) == 0) {
+			FUNC_END();
 			return gate;
 		}
 	}
 
 
 	warn("Failed to find gate %s in circuit %s", name, circ->name);
+	FUNC_END();
 	return NULL;
 }
 
 
 port_t *circuit_get_port_by_name(circuit_t *circ, char *gatename, char *portname) {
+	FUNC_START();
+
 	assert_not_null(circ);
 	assert_not_null(gatename);
 	assert_not_null(portname);
 
-
+	FUNC_PAUSE();
 	gate_t *gate = circuit_get_gate_by_name(circ, gatename);
 	assert_not_null(gate);
+	FUNC_RESUME();
 
-	return gate_get_port_by_name(gate, portname);
+	FUNC_PAUSE();
+	port_t *port = gate_get_port_by_name(gate, portname);
+	FUNC_RESUME();
+
+	FUNC_END();
+	return port;
 }
 
 
 port_t *circuit_get_io_port_by_name(circuit_t *circ, char *portname) {
+	FUNC_START();
+
 	assert_not_null(circ);
 	assert_not_null(portname);
 
@@ -120,11 +144,13 @@ port_t *circuit_get_io_port_by_name(circuit_t *circ, char *portname) {
 		port_t *port = gate->ports.items[0];
 
 		if (strcmp(port->name, portname) == 0) {
+			FUNC_END();
 			return port;
 		}
 	}
 
 	warn("Failed to find I/O port %s for circuit %s", portname, circ->name);
+	FUNC_END();
 	return NULL;
 }
 

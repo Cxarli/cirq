@@ -1,9 +1,12 @@
 #include "vector.h"
 
 #include "assert.h"
+#include "benchmark.h"
 
 
 bool vector_push(vector_t *vec, void *item) {
+	FUNC_START();
+
 	assert_not_null(vec);
 
 	// NOTE: Blocks vectors from containing NULL
@@ -11,7 +14,8 @@ bool vector_push(vector_t *vec, void *item) {
 
 	// Check for overflow
 	if (vec->amount == vec->size - 1) {
-		panic("Overflowing vector");
+		panic("Overflowing vector!");
+		FUNC_END();
 		return false;
 	}
 
@@ -21,6 +25,7 @@ bool vector_push(vector_t *vec, void *item) {
 	// Increase counter
 	vec->amount++;
 
+	FUNC_END();
 	return true;
 }
 

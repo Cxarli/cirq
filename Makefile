@@ -40,7 +40,7 @@ RESET := $(shell echo -ne "\e[0m")
 TAB := $(shell echo -ne "\t")
 
 # All targets that are not files
-.PHONY: help asan all shit valgrind valshit run clean remake cleanrun
+.PHONY: help asan all shit bench bench_build valgrind valshit run clean remake cleanrun
 
 
 # Show some help
@@ -48,6 +48,7 @@ help:
 	@echo -e "make help      show this help"
 	@echo -e "make all       build all files with ASAN on clang"
 	@echo -e "make shit      build all files with ASAN on gcc"
+	@echo -e "make bench     build all files with ASAN on clang with benchmarking on"
 	@echo -e "make valgrind  build all files (clang), then run with valgrind"
 	@echo -e "make valshit   build all files (gcc), then run with valgrind"
 	@echo -e "make run       just run the executable"
@@ -69,6 +70,18 @@ all: asan
 shit: CC = gcc
 shit: CFLAGS = $(GCC_FLAGS)
 shit: asan
+
+
+bench_build: CFLAGS = -O3 -DBENCH
+bench_build: cleanrun
+
+bench:
+	@rm -f bench
+	@touch bench
+	@make --no-print-directory bench_build
+	@rm -f tmp
+	@sort -n bench
+	@rm -f bench
 
 
 # Enable and run valgrind

@@ -1,9 +1,15 @@
 #include "read_template.h"
 
 #include "assert.h"
+#include "benchmark.h"
+#ifdef BENCH
+	#define return FUNC_END(); return
+#endif
 
 
 bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
+	FUNC_START();
+
 	assert_not_null(filename);
 	assert_not_null(circ);
 
@@ -30,6 +36,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
 	if (strcmp(buf, "[gates]") != 0) {
 		panic("no [gates]?? %s unexpected", buf);
+		FUNC_END();
 		return false;
 	}
 
@@ -53,6 +60,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 		if (read_arguments == -1) {
 			// Unexpected end of file
 			panic("EOF??");
+			FUNC_END();
 			return false;
 		}
 
@@ -64,7 +72,9 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 		g->type = type;
 
 		// Set the correct ports
+		FUNC_PAUSE();
 		success &= gate_set_ports(g, portname, dependencies);
+		FUNC_RESUME();
 
 		// Add gate to circuit
 		assert(vector_push(&circ->gates, g));
@@ -79,6 +89,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
 	if (strcmp(buf, "[wires]") != 0) {
 		panic("no [wires]?? %s unexpected", buf);
+		FUNC_END();
 		return false;
 	}
 
@@ -95,6 +106,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 		if (x == -1) {
 			// Unexpected end of file
 			panic("EOF??");
+			FUNC_END();
 			return false;
 		}
 
@@ -108,7 +120,9 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 		w->rightport = rightport;
 
 		// Apply wire to circuit
+		FUNC_PAUSE();
 		success &= circuit_apply_wire(circ, w);
+		FUNC_RESUME();
 
 		// Free wire again
 		wire_free(w);
@@ -122,7 +136,11 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 	// Make sure all gates are in the right state
 	// NOTE: This will crash if a contradicting loop occurs in the program
 	//   example: NOT:I0 <---> NOT:O0
+	FUNC_PAUSE();
 	success &= circuit_update_state(circ);
+	FUNC_RESUME();
 
+
+	FUNC_END();
 	return success;
 }
