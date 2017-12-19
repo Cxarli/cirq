@@ -4,14 +4,17 @@
 
 
 bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
-  assert_neq(filename, NULL);
-  assert_neq(circ, NULL);
+  assert_not_null(filename);
+  assert_not_null(circ);
 
+  // Temporary buffer
   char buf[BUF_SIZE];
+
+  bool success = true;
 
   // Open file
   FILE *file = fopen(filename, "r");
-  assert_neq(file, NULL);
+  assert_not_null(file);
 
   // Get name, which is always the first thing in a file
   // example: NAND
@@ -25,8 +28,9 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
   fscanf(file, "%s %lu\n", buf, &amount_gates);
 
-  if ( strcmp(buf, "[gates]") != 0 ) {
-    panic("no [gates]?? '%s' unexpected", buf);
+  if (strcmp(buf, "[gates]") != 0) {
+    panic("no [gates]?? %s unexpected", buf);
+    return false;
   }
 
 
@@ -46,21 +50,21 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
       portname = NULL;
     }
 
-    if ( read_arguments == -1 ) {
+    if (read_arguments == -1) {
       // Unexpected end of file
       panic("EOF??");
+      return false;
     }
 
     // New gate
     gate_t *g = malloc(sizeof(gate_t));
     gate_init(g);
 
-
     g->name = name;
     g->type = type;
 
     // Set the correct ports
-    assert(gate_set_ports(g, portname, dependencies));
+    success &= gate_set_ports(g, portname, dependencies);
 
     // Add gate to circuit
     assert(vector_push(&circ->gates, g));
@@ -73,9 +77,11 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
   fscanf(file, "%s %lu\n", buf, &amount_wires);
 
-  if ( strcmp(buf, "[wires]") != 0 ) {
-    panic("no [wires]?? '%s' unexpected", buf);
+  if (strcmp(buf, "[wires]") != 0) {
+    panic("no [wires]?? %s unexpected", buf);
+    return false;
   }
+
 
   for (size_t i = 0; i < amount_wires; i++) {
     char *leftuuid = malloc(BUF_SIZE * sizeof(char));
@@ -86,9 +92,10 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     // example:  da2ecd25:O0 eec2fc01:I0
     int x = fscanf(file, "%[a-f0-9]:%s %[a-f0-9]:%s\n", leftuuid, leftport, rightuuid, rightport);
 
-    if ( x == -1 ) {
+    if (x == -1) {
       // Unexpected end of file
       panic("EOF??");
+      return false;
     }
 
     // Create new wire
@@ -100,8 +107,10 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
     w->rightuuid = rightuuid;
     w->rightport = rightport;
 
-    assert(circuit_apply_wire(circ, w));
+    // Apply wire to circuit
+    success &= circuit_apply_wire(circ, w);
 
+    // Free wire again
     wire_free(w);
     free(w);
   }
@@ -113,5 +122,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
   // Make sure all gates are in the right state
   // NOTE: This will crash if a contradicting loop occurs in the program
   //   example: NOT:I0 <---> NOT:O0
-  return circuit_update_state(circ);
+  success &= circuit_update_state(circ);
+
+  return success;
 }

@@ -40,6 +40,9 @@ typedef struct test_result {
 #define assert_neq(x, y) \
   assert((x) != (y), #x " == " #y)
 
+#define assert_not_null(x) \
+  assert((x) != NULL, #x " is NULL")
+
 
 #define TEST_START \
   test_result_t __test = { .total = 0, .fails = 0 }; \

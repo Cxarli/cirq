@@ -22,6 +22,10 @@
   if (! (x)) \
     panic(#x " is not true");
 
+#define assert_not_null(x) \
+  if (x == NULL) \
+    panic(#x " is NULL");
+
 
 #define assert_eq(x, y) \
   if ((x) != (y)) \

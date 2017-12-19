@@ -32,6 +32,8 @@ typedef struct vector {
 
 
 bool vector_push(vector_t *vec, void *item);
+
+
 void vector_init(vector_t *vec, size_t size);
 void vector_free(vector_t *vec);
 

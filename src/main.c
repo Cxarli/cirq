@@ -1,5 +1,5 @@
 #include "test.h"
-#include "defines.h" // switch_str, case_str
+#include "defines.h"
 
 
 int main(int argc, char *argv[]) {

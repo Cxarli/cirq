@@ -6,7 +6,7 @@
 
 
 void wire_print(wire_t *wire) {
-  assert_neq(wire, NULL);
+  assert_not_null(wire);
 
   printf("%s:%s <---> %s:%s", wire->leftuuid, wire->leftport, wire->rightuuid, wire->rightport);
 }

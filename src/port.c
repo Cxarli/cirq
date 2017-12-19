@@ -6,22 +6,24 @@
 
 
 bool port_update_state(port_t *port) {
-  assert_neq(port, NULL);
+  assert_not_null(port);
 
   bool success = true;
 
   if (port->type == PortType_INPUT) {
-    success = gate_update_state(port->gate);
+    // Input ports should update the gate they are attached to
+    success &= gate_update_state(port->gate);
   }
-  else {
-    // If port is an output, copy state to other inputs
-    VEC_EACH(port->connections, port_t *connection) {
-      if (connection->type == PortType_INPUT) {
-        connection->state = port->state;
 
-        success &= port_update_state(connection);
-      }
+  else if (port->type == PortType_OUTPUT) {
+    // Output ports should copy their state to their connected input ports
+    VEC_EACH(port->connections, port_t *connection) {
+      success &= port_set_state(connection, port->state);
     }
+  }
+
+  else {
+    panic("Port %s:%s has invalid type", port->gate->name, port->name);
   }
 
   return success;
@@ -31,11 +33,6 @@ bool port_update_state(port_t *port) {
 bool port_set_state(port_t *port, bool state) {
   port->state = state;
   return port_update_state(port);
-}
-
-
-bool port_get_state(port_t *port) {
-  return port->state;
 }
 
 
@@ -55,7 +52,7 @@ void port_print(port_t *port) {
 
     printf("%s:%s", gatename, connection->name);
 
-    // Not the last item
+    // Print a comma when it's not the last item
     if (i < port->connections.amount - 1) {
       printf(", ");
     }

@@ -6,10 +6,13 @@
 #include <string.h>
 
 
+// The default size for buffers, vectors, etc
 #define BUF_SIZE 256
 
 
+// Comment the next line to enable debugging statements
 #define DEBUG
+
 #ifndef DEBUG
   #define DEBUG printf("DEBUG %s:%i %s\n", __FILE__, __LINE__, __FUNCTION__)
 #endif
@@ -17,6 +20,7 @@
 
 #define CONCAT_(x, y) x ## y
 #define CONCAT(x, y) CONCAT_(x, y)
+
 
 // Scope a variable for the following block
 #define with(statement) \
@@ -30,7 +34,8 @@
 
 
 #define case_str(y) \
-  if ( strcmp(SWITCH_STR, (y)) == 0 )
+  if (strcmp(SWITCH_STR, (y)) == 0)
+
 
 /*
   // use it like:

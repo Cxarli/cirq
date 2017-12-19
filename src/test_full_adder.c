@@ -45,11 +45,11 @@ test_result_t test_full_adder(void) {
   port_t *oco = circuit_get_port_by_name(&fa_circ, "57f26486", "Co");
 
   // Make sure we got them
-  assert_neq(i0, NULL);
-  assert_neq(i1, NULL);
-  assert_neq(ici, NULL);
-  assert_neq(os, NULL);
-  assert_neq(oco, NULL);
+  assert_not_null(i0);
+  assert_not_null(i1);
+  assert_not_null(ici);
+  assert_not_null(os);
+  assert_not_null(oco);
 
   // Check their types
   assert_eq(i0->type, PortType_OUTPUT);
@@ -59,73 +59,73 @@ test_result_t test_full_adder(void) {
   assert_eq(oco->type, PortType_INPUT);
 
   // Make sure default inputs are false
-  assert_eq(port_get_state(i0), false);
-  assert_eq(port_get_state(i1), false);
-  assert_eq(port_get_state(ici), false);
+  assert_eq(i0->state, false);
+  assert_eq(i1->state, false);
+  assert_eq(ici->state, false);
 
   // A B C -> C S
   // 0 0 0 -> 0 0
   port_set_state(i0, false);
   port_set_state(i1, false);
   port_set_state(ici, false);
-  assert_eq(port_get_state(oco), false);
-  assert_eq(port_get_state(os), false);
+  assert_eq(oco->state, false);
+  assert_eq(os->state, false);
 
   // A B C -> C S
   // 0 0 1 -> 0 1
   port_set_state(i0, false);
   port_set_state(i1, false);
   port_set_state(ici, true);
-  assert_eq(port_get_state(oco), false);
-  assert_eq(port_get_state(os), true);
+  assert_eq(oco->state, false);
+  assert_eq(os->state, true);
 
   // A B C -> C S
   // 0 1 0 -> 0 1
   port_set_state(i0, false);
   port_set_state(i1, true);
   port_set_state(ici, false);
-  assert_eq(port_get_state(oco), false);
-  assert_eq(port_get_state(os), true);
+  assert_eq(oco->state, false);
+  assert_eq(os->state, true);
 
   // A B C -> C S
   // 0 1 1 -> 1 0
   port_set_state(i0, false);
   port_set_state(i1, true);
   port_set_state(ici, true);
-  assert_eq(port_get_state(oco), true);
-  assert_eq(port_get_state(os), false);
+  assert_eq(oco->state, true);
+  assert_eq(os->state, false);
 
   // A B C -> C S
   // 1 0 0 -> 0 1
   port_set_state(i0, true);
   port_set_state(i1, false);
   port_set_state(ici, false);
-  assert_eq(port_get_state(oco), false);
-  assert_eq(port_get_state(os), true);
+  assert_eq(oco->state, false);
+  assert_eq(os->state, true);
 
   // A B C -> C S
   // 1 0 1 -> 1 0
   port_set_state(i0, true);
   port_set_state(i1, false);
   port_set_state(ici, true);
-  assert_eq(port_get_state(oco), true);
-  assert_eq(port_get_state(os), false);
+  assert_eq(oco->state, true);
+  assert_eq(os->state, false);
 
   // A B C -> C S
   // 1 1 0 -> 1 0
   port_set_state(i0, true);
   port_set_state(i1, true);
   port_set_state(ici, false);
-  assert_eq(port_get_state(oco), true);
-  assert_eq(port_get_state(os), false);
+  assert_eq(oco->state, true);
+  assert_eq(os->state, false);
 
   // A B C -> C S
   // 1 1 1 -> 1 1
   port_set_state(i0, true);
   port_set_state(i1, true);
   port_set_state(ici, true);
-  assert_eq(port_get_state(oco), true);
-  assert_eq(port_get_state(os), true);
+  assert_eq(oco->state, true);
+  assert_eq(os->state, true);
 
 
 
