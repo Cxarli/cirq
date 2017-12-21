@@ -174,7 +174,7 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
 
 			// Take gates from circuit
 			FUNC_PAUSE();
-			success &= gate_take_gates_from_circuit(gate, custom);
+			success &= gate_take_io_gates_from_circuit(gate, custom);
 			FUNC_RESUME();
 
 			FUNC_END();
@@ -189,7 +189,7 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
 }
 
 
-bool gate_take_gates_from_circuit(gate_t *gate, circuit_t *circuit) {
+bool gate_take_io_gates_from_circuit(gate_t *gate, circuit_t *circuit) {
 	FUNC_START();
 
 	assert_not_null(gate);
@@ -199,7 +199,7 @@ bool gate_take_gates_from_circuit(gate_t *gate, circuit_t *circuit) {
 	bool success = true;
 
 
-	VEC_EACH(circuit->gates, gate_t *g) {
+	HEX_HASHMAP_EACH_VALUE(circuit->gates, gate_t *g) {
 		assert_not_null(g);
 
 		char *newportname = NULL;
@@ -362,7 +362,7 @@ bool gate_update_state(gate_t *gate) {
 			FUNC_RESUME();
 
 			// Mirror inner circuit state to outer gate
-			VEC_EACH(gate->inner_circuit->gates, gate_t *inner_gate) {
+			HEX_HASHMAP_EACH_VALUE(gate->inner_circuit->gates, gate_t *inner_gate) {
 				// Filter on output only
 				if (strcmp(inner_gate->type, "OUT") != 0) {
 					continue;

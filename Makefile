@@ -76,12 +76,12 @@ bench_build: CFLAGS = -O3 -DBENCH
 bench_build: cleanrun
 
 bench:
-	@rm -f bench
-	@touch bench
+	@rm -f /tmp/bench
+	@touch /tmp/bench
 	@make --no-print-directory bench_build
-	@rm -f tmp
-	@sort -n bench
-	@rm -f bench
+	@rm -f /tmp/bench.tmp
+	@sort -n /tmp/bench
+	@rm -f /tmp/bench
 
 
 # Enable and run valgrind

@@ -4,11 +4,12 @@
 
 #include "wire.h"
 #include "gate.h"
+#include "hex_hashmap.h"
 
 
 typedef struct circuit {
 	char *name;
-	vector_t gates;
+	hex_hashmap_t gates;
 } circuit_t;
 
 

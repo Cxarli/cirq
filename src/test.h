@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "color.h"
+
 
 typedef struct test_result {
 	unsigned int fails;
@@ -14,7 +16,7 @@ typedef struct test_result {
 
 #define failstr(x) { \
 	++__test.fails; \
-	fprintf(stderr, "[FAIL] %s:%i    %s\n", __FILE__, __LINE__, x); \
+	fprintf(stderr, C_RED "[FAIL] %s:%i" C_RESET_FG " \t%s\n", __FILE__, __LINE__, x); \
 }
 
 
@@ -43,6 +45,12 @@ typedef struct test_result {
 #define assert_not_null(x) \
 	assert((x) != NULL, #x " is NULL")
 
+#define assert_str_eq(x, y) \
+	assert(strcmp((x), (y)) == 0, #x " != " #y)
+
+#define assert_str_neq(x, y) \
+	assert(strcmp((x), (y)) != 0, #x " != " #y)
+
 
 #define TEST_START \
 	test_result_t __test = { .total = 0, .fails = 0 }; \
@@ -59,18 +67,18 @@ typedef struct test_result {
 	__tests += __result.total; \
 	\
 	if (__result.fails == 0) { \
-		printf("[ OK ] " #func "\n"); \
+		printf(C_GREEN "[ OK ] " #func "\n" C_RESET_FG); \
 	} \
 }
 
 
 #define TESTS_START \
-	printf("\nStarting tests...\n\n"); \
+	printf(C_LIGHT_BLUE "\nStarting tests...\n\n" C_RESET_FG); \
 	unsigned int __tests = 0, __failed_tests = 0; \
 
 
 #define TESTS_RESULT \
-	printf("\n\nTests done. %i / %i tests successful\n", __tests - __failed_tests, __tests); \
+	printf(C_LIGHT_BLUE "\n\nTests done. %i / %i tests successful\n\n" C_RESET_FG, __tests - __failed_tests, __tests); \
 
 
 

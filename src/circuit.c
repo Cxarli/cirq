@@ -11,34 +11,20 @@ bool circuit_apply_wire(circuit_t *circ, wire_t *wire) {
 	assert_not_null(circ);
 	assert_not_null(wire);
 
-	port_t *left_port = NULL;
-	port_t *right_port = NULL;
+	// Get the matching gates
+	gate_t *left_gate = circuit_get_gate_by_name(circ, wire->leftuuid);
+	gate_t *right_gate = circuit_get_gate_by_name(circ, wire->rightuuid);
 
-
-	// Get the matching ports
-	VEC_EACH(circ->gates, gate_t *gate) {
-		assert_not_null(gate);
-
-		switch_str(gate->name) {
-			case_str(wire->leftuuid) {
-				left_port = gate_get_port_by_name(gate, wire->leftport);
-
-				assert_not_null(left_port);
-			}
-
-			// NOTE: Using `else` disables the possibility to link a gate to itself,
-			// which can be both desired and not desired
-			case_str(wire->rightuuid) {
-				right_port = gate_get_port_by_name(gate, wire->rightport);
-
-				assert_not_null(right_port);
-			}
-		}
+	if (left_gate == NULL || right_gate == NULL) {
+		goto fail;
 	}
 
+	port_t *left_port = gate_get_port_by_name(left_gate, wire->leftport);
+	port_t *right_port = gate_get_port_by_name(right_gate, wire->rightport);
 
 	// Make sure we got all ports
 	if (left_port == NULL || right_port == NULL) {
+		fail:
 		STDOUT_TO_STDERR();
 
 		printf("Failed to find both ports for wire ");
@@ -68,7 +54,7 @@ bool circuit_update_state(circuit_t *circ) {
 
 	bool success = true;
 
-	VEC_EACH(circ->gates, gate_t *gate) {
+	HEX_HASHMAP_EACH_VALUE(circ->gates, gate_t *gate) {
 		assert_not_null(gate);
 
 		FUNC_PAUSE();
@@ -88,19 +74,16 @@ gate_t *circuit_get_gate_by_name(circuit_t *circ, char *name) {
 	assert_not_null(name);
 
 
-	VEC_EACH(circ->gates, gate_t *gate) {
-		assert_not_null(gate);
+	gate_t *gate = hex_hashmap_get_item(&circ->gates, name);
 
-		if (strcmp(gate->name, name) == 0) {
-			FUNC_END();
-			return gate;
-		}
+	if (gate == NULL) {
+		warn("Failed to find gate %s in circuit %s", name, circ->name);
+		FUNC_END();
+		return NULL;
 	}
 
-
-	warn("Failed to find gate %s in circuit %s", name, circ->name);
 	FUNC_END();
-	return NULL;
+	return gate;
 }
 
 
@@ -132,7 +115,7 @@ port_t *circuit_get_io_port_by_name(circuit_t *circ, char *portname) {
 	assert_not_null(portname);
 
 
-	VEC_EACH(circ->gates, gate_t *gate) {
+	HEX_HASHMAP_EACH_VALUE(circ->gates, gate_t *gate) {
 		assert_not_null(gate);
 
 		// Filter on I/O ports only
@@ -158,13 +141,12 @@ port_t *circuit_get_io_port_by_name(circuit_t *circ, char *portname) {
 void circuit_print(circuit_t *circ) {
 	assert_not_null(circ);
 
-	printf("Circuit %s: %lu gates\n\n", circ->name, circ->gates.amount);
+	printf("Circuit %s: %lu gates\n\n", circ->name, hex_hashmap_amount(&circ->gates));
 
-	// Print gates
-	for (size_t i = 0; i < circ->gates.amount; i++) {
+	HEX_HASHMAP_EACH_VALUE_INDEX(circ->gates, gate_t *gate, i) {
 		printf("gate %lu: ", i);
 
-		gate_print(circ->gates.items[i]);
+		gate_print(gate);
 		printf("\n");
 	}
 }
@@ -175,7 +157,7 @@ void circuit_init(circuit_t *circ) {
 
 	circ->name = NULL;
 
-	vector_init(&circ->gates, BUF_SIZE);
+	hex_hashmap_init(&circ->gates);
 }
 
 
@@ -185,12 +167,12 @@ void circuit_free(circuit_t *circ) {
 	if (circ->name) free(circ->name);
 
 	// Free gates
-	VEC_EACH(circ->gates, gate_t* g) {
+	HEX_HASHMAP_EACH_VALUE(circ->gates, gate_t* g) {
 		assert_not_null(g);
 
 		gate_free(g);
 		free(g);
 	}
 
-	vector_free(&circ->gates);
+	hex_hashmap_free(&circ->gates);
 }

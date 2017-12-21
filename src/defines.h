@@ -24,8 +24,13 @@
 
 // Scope a variable for the following block
 #define with(statement) \
-	for (char CONCAT(x, __LINE__) = 1; CONCAT(x, __LINE__);) \
-		for (statement; CONCAT(x, __LINE__); CONCAT(x, __LINE__) = 0) \
+	for (char CONCAT(__wx, __LINE__) = 1; CONCAT(__wx, __LINE__);) \
+		for (statement; CONCAT(__wx, __LINE__); CONCAT(__wx, __LINE__) = 0) \
+
+// Scope another variable for the following block
+#define and_with(statement) \
+	for (char CONCAT(__wy, __LINE__) = 1; CONCAT(__wy, __LINE__);) \
+		for (statement; CONCAT(__wy, __LINE__); CONCAT(__wy, __LINE__) = 0) \
 
 
 // Easier string switch'ing

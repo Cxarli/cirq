@@ -2,9 +2,7 @@
 
 #include "assert.h"
 #include "benchmark.h"
-#ifdef BENCH
-	#define return FUNC_END(); return
-#endif
+#include "hex_hashmap.h"
 
 
 bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
@@ -77,7 +75,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 		FUNC_RESUME();
 
 		// Add gate to circuit
-		assert(vector_push(&circ->gates, g));
+		assert(hex_hashmap_add_item(&circ->gates, g->name, g));
 	}
 
 

@@ -6,14 +6,17 @@
 #include <errno.h>
 #include <signal.h>
 
+#include "color.h"
+
 
 #define warn(fmt, VARGS...) \
-	fprintf(stderr, "[" __FILE__ ":%i] " fmt "\n", __LINE__, ##VARGS);
+	fprintf(stderr, C_LIGHT_YELLOW "[" __FILE__ ":%i] " fmt "\n" C_RESET_FG, __LINE__, ##VARGS);
 
 
 #define panic(fmt, VARGS...) { \
-	fprintf(stderr, "[" __FILE__ ":%i] " fmt " (E%i)\n", __LINE__, ##VARGS, errno); \
+	fprintf(stderr, C_LIGHT_RED "[" __FILE__ ":%i] " fmt " (E%i)\n" C_RESET_FG, __LINE__, ##VARGS, errno); \
 	/* Force crash with stacktrace: */ \
+	fprintf(stderr, "\n\n" C_BOLD C_BG_RED "!!! FORCED SEGMENTATION FAULT BECAUSE OF PANIC !!!" C_RESET_BOLD C_RESET_BG "\n"); \
 	raise(SIGSEGV); \
 }
 
@@ -29,12 +32,21 @@
 
 #define assert_eq(x, y) \
 	if ((x) != (y)) \
+		panic(#x " (%i) != " #y " (%i)", (x), (y));
+
+
+#define assert_str_eq(x, y) \
+	if (strcmp((x), (y)) != 0) \
 		panic(#x " != " #y);
 
 
 #define assert_neq(x, y) \
 	if ((x) == (y)) \
-		panic(#x " == " #y);
+		panic(#x " == " #y " (%i)", (y));
 
+
+#define assert_str_neq(x, y) \
+	if (strcmp((x), (y)) == 0) \
+		panic(#x " == " #y);
 
 #endif

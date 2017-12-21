@@ -1,6 +1,7 @@
 #include "benchmark.h"
 #include "test.h"
 #include "defines.h"
+#include "hhmtest.h"
 
 
 int main(int argc, char *argv[]) {
@@ -10,6 +11,8 @@ int main(int argc, char *argv[]) {
 
 	// If no tests specified, run some default tests
 	if (argc == 1) {
+		TEST(hhmtest);
+
 		TEST(test_nand);
 		TEST(test_nor);
 		TEST(test_xand);
