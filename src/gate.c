@@ -114,6 +114,7 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
 			success &= gate_add_output(gate, 0, NULL);
 			FUNC_RESUME();
 
+			FUNC_END();
 			return success;
 		}
 
@@ -125,6 +126,7 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
 			success &= gate_add_output(gate, 0, NULL);
 			FUNC_RESUME();
 
+			FUNC_END();
 			return success;
 		}
 
@@ -136,6 +138,7 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
 			success &= gate_add_output(gate, 0, NULL);
 			FUNC_RESUME();
 
+			FUNC_END();
 			return success;
 		}
 
@@ -146,6 +149,7 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
 			success &= gate_add_output(gate, 0, NULL);
 			FUNC_RESUME();
 
+			FUNC_END();
 			return success;
 		}
 
@@ -155,6 +159,7 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
 			success &= gate_add_output(gate, 0, portname);
 			FUNC_RESUME();
 
+			FUNC_END();
 			return success;
 		}
 
@@ -164,22 +169,29 @@ bool gate_set_ports(gate_t *gate, char *portname, vector_t *dependencies) {
 			success &= gate_add_input(gate, 0, portname);
 			FUNC_RESUME();
 
+			FUNC_END();
 			return success;
 		}
 
 
 		else {
 			// Try to find circuit in dependencies
+			FUNC_PAUSE();
 			circuit_t *custom = find_dependency(dependencies, gate->type);
+			FUNC_RESUME();
 
 			// If failed to find custom circuit
 			if (custom == NULL) {
 				warn("Failed to set ports for gate of type %s", gate->type);
+				FUNC_END();
 				return false;
 			}
 
 			// Copy circuit to inner circuit
+			FUNC_PAUSE();
 			gate->inner_circuit = circuit_copy(custom);
+			FUNC_RESUME();
+
 
 			// Link to inner circuit
 			FUNC_PAUSE();
@@ -455,6 +467,7 @@ bool gate_is_io(gate_t *gate) {
 	FUNC_START();
 
 	bool is_io = strcmp(gate->type, "IN") == 0 || strcmp(gate->type, "OUT") == 0;
+
 	FUNC_END();
 	return is_io;
 }
@@ -462,6 +475,7 @@ bool gate_is_io(gate_t *gate) {
 
 gate_t *gate_copy(gate_t *src) {
 	FUNC_START();
+
 	assert_not_null(src);
 
 	gate_t *dest = malloc(sizeof(gate_t));

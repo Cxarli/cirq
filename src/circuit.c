@@ -32,6 +32,7 @@ bool circuit_apply_wire(circuit_t *circ, wire_t *wire) {
 		printf("\n");
 
 		RESET_STDOUT();
+
 		FUNC_END();
 		return false;
 	}

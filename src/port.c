@@ -6,15 +6,8 @@
 #include "benchmark.h"
 
 
-#define DEBUG_PRINT_PORT(p) \
-	printf("<0x%04x> %s{%s}:%s\n", (0xffff & (unsigned int) p->gate), p->gate->name, p->gate->type, p->name);
-
-
 bool port_update_state(port_t *port) {
 	FUNC_START();
-
-	//printf("UPDATE ");
-	//DEBUG_PRINT_PORT(port)
 
 	assert_not_null(port);
 
@@ -28,19 +21,14 @@ bool port_update_state(port_t *port) {
 	}
 
 	else if (port->type == PortType_OUTPUT || port->type == PortType_NODE) {
-		// Outputs and nodes hould copy their state to their connected inputs and nodes
+		// Outputs and nodes should copy their state to their connected inputs and nodes
 		VEC_EACH(port->connections, port_t *connection) {
-			// Filter on inputs
-			if (connection->type != PortType_INPUT) {
+			// Filter on inputs and nodes
+			if (connection->type != PortType_INPUT && connection->type != PortType_NODE) {
 				continue;
 			}
 
 			FUNC_PAUSE();
-			//printf("SET ");
-			//DEBUG_PRINT_PORT(connection);
-			//printf("\tBY ");
-			//DEBUG_PRINT_PORT(port);
-
 			success &= port_set_state(connection, port->state);
 			FUNC_RESUME();
 		}
@@ -54,9 +42,11 @@ bool port_update_state(port_t *port) {
 bool port_set_state(port_t *port, bool state) {
 	FUNC_START();
 
-	//printf("SET ");
-	//DEBUG_PRINT_PORT(port);
-	//printf("\tBY UNKNOWN\n");
+	if (port->state == state) {
+		// Don't change anything
+		FUNC_END();
+		return true;
+	}
 
 	port->state = state;
 

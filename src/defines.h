@@ -18,6 +18,10 @@
 #endif
 
 
+#define DEBUG_PRINT_PORT(p) \
+	printf("<0x%04x> %s{%s}:%s\n", (0xffff & (unsigned int) p->gate), p->gate->name, p->gate->type, p->name);
+
+
 #define CONCAT_(x, y) x ## y
 #define CONCAT(x, y) CONCAT_(x, y)
 

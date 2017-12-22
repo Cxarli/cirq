@@ -57,6 +57,7 @@ bool vector_remove(vector_t *vec, void *item) {
 	// Check if index is in bounds
 	if (i == vec->amount) {
 		warn("Failed to remove item from vector, since it's not in the vector");
+		FUNC_END();
 		return false;
 	}
 
