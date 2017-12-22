@@ -117,6 +117,7 @@ typedef struct hex_hashmap {
 
 
 void *hex_hashmap_get_item(hex_hashmap_t *map, char *name);
+bool hex_hashmap_remove_item(hex_hashmap_t *map, char *name);
 bool hex_hashmap_add_item(hex_hashmap_t *map, char *name, void *value);
 hex_hashmap_list_t *hex_hashmap_get_list(hex_hashmap_t *map, char *name);
 size_t hex_hashmap_get_list_index_for_name(char *name);
@@ -124,6 +125,8 @@ size_t hex_hashmap_amount(hex_hashmap_t *map);
 
 
 void *hex_hashmap_list_get_item(hex_hashmap_list_t *list, char *name);
+bool hex_hashmap_list_remove_item(hex_hashmap_t *map, hex_hashmap_list_t *list, char *name);
+bool hex_hashmap_list_contains_item(hex_hashmap_list_t *list, char *name);
 bool hex_hashmap_list_add_item(hex_hashmap_list_t *list, char *name, void *value);
 hex_hashmap_list_t *hex_hashmap_list_get_last(hex_hashmap_list_t *list);
 

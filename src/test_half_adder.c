@@ -6,23 +6,11 @@ test_result_t test_half_adder(void) {
 	TEST_START;
 
 	// Create circuit
-	circuit_t xor_circ;
-	circuit_init(&xor_circ);
-	
 	circuit_t ha_circ;
 	circuit_init(&ha_circ);
 
-	vector_t deps;
-	vector_init(&deps, BUF_SIZE);
-
-	// Read XOR circuit
-	assert_true(read_template("tests/xor", &xor_circ, NULL));
-
-	// Add XOR circuit to deps tree
-	assert_true(vector_push(&deps, &xor_circ));
-
 	// Read Half-Adder circuit
-	assert_true(read_template("tests/half_adder", &ha_circ, &deps));
+	assert_true(read_template("tests/half_adder", &ha_circ, NULL));
 
 	// ... Do fun things
 
@@ -82,9 +70,7 @@ test_result_t test_half_adder(void) {
 
 
 	// Free everything
-	circuit_free(&xor_circ);
 	circuit_free(&ha_circ);
-	vector_free(&deps);
 
 	TEST_END;
 }

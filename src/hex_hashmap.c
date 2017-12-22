@@ -42,16 +42,40 @@ bool hex_hashmap_add_item(hex_hashmap_t *map, char *name, void *value) {
 	hex_hashmap_list_t *list = hex_hashmap_get_list(map, name);
 	assert_not_null(list);
 
+	// Don't allow duplicates
+	if (hex_hashmap_list_contains_item(list, name)) {
+		panic("Can not add item: already in map");
+		return NULL;
+	}
+
 	return hex_hashmap_list_add_item(list, name, value);
+}
+
+
+bool hex_hashmap_remove_item(hex_hashmap_t *map, char *name) {
+	assert_not_null(map);
+	assert_not_null(name);
+
+	hex_hashmap_list_t *list = hex_hashmap_get_list(map, name);
+	assert_not_null(list);
+
+	return hex_hashmap_list_remove_item(map, list, name);
 }
 
 
 size_t hex_hashmap_amount(hex_hashmap_t *map) {
 	assert_not_null(map);
 
-	(void) map;
-	panic("NOT YET IMPLEMENTED");
-	return 0;
+	// TODO: Optimise
+	size_t amount = 0;
+
+	HEX_HASHMAP_EACH_VALUE(*map, void *_x) {
+		(void) _x;
+
+		amount++;
+	}
+
+	return amount;
 }
 
 
@@ -62,6 +86,10 @@ void *hex_hashmap_list_get_item(hex_hashmap_list_t *list, char *name) {
 
 	hex_hashmap_list_t *item = list;
 
+	if (item->name == NULL) {
+		goto fail;
+	}
+
 	while (item != NULL) {
 		if (strcmp(item->name, name) == 0) {
 			return item->value;
@@ -70,9 +98,72 @@ void *hex_hashmap_list_get_item(hex_hashmap_list_t *list, char *name) {
 		item = item->next;
 	}
 
-
+	fail:
 	warn("Failed to find hex_hashmap item for name '%s'", name);
 	return NULL;
+}
+
+
+bool hex_hashmap_list_remove_item(hex_hashmap_t *map, hex_hashmap_list_t *list, char *name) {
+	assert_not_null(list);
+	assert_not_null(name);
+
+	hex_hashmap_list_t *item = list;
+
+	if (item->name == NULL) {
+		goto notfound;
+	}
+
+	// Check if first item
+	if (strcmp(item->name, name) == 0) {
+		if (item->next != NULL) {
+			// Replace the first item with the next
+			map->items[hex_hashmap_get_list_index_for_name(name)] = item->next;
+		}
+		else {
+			// Reset to initial state
+			item->name = NULL;
+			item->value = NULL;
+		}
+
+		return true;
+	}
+
+
+	while (item->next != NULL) {
+		if (strcmp(item->next->name, name) == 0) {
+			item->next = item->next->next;
+			return true;
+		}
+
+		item = item->next;
+	}
+
+	notfound:
+	warn("Failed to remove item %s, since it's not in the hexmap", name);
+	return false;
+}
+
+
+bool hex_hashmap_list_contains_item(hex_hashmap_list_t *list, char *name) {
+	assert_not_null(list);
+	assert_not_null(name);
+
+	hex_hashmap_list_t *item = list;
+
+	if (item->name == NULL) {
+		return false;
+	}
+
+	while (item != NULL) {
+		if (strcmp(item->name, name) == 0) {
+			return true;
+		}
+
+		item = item->next;
+	}
+
+	return false;
 }
 
 
@@ -84,6 +175,7 @@ bool hex_hashmap_list_add_item(hex_hashmap_list_t *list, char *name, void *value
 
 	// First item
 	if (list->name == NULL) {
+		// Replace first item
 		list->name = name;
 		list->value = value;
 		return true;

@@ -138,15 +138,63 @@ port_t *circuit_get_io_port_by_name(circuit_t *circ, char *portname) {
 }
 
 
-void circuit_print(circuit_t *circ) {
+circuit_t *circuit_copy(circuit_t *src) {
+	FUNC_START();
+	assert_not_null(src);
+
+	circuit_t *dest = malloc(sizeof(circuit_t));
+	circuit_init(dest);
+
+	dest->name = malloc((strlen(src->name) + 1) * sizeof(char));
+	strcpy(dest->name, src->name);
+
+	// Copy gates + ports
+	HEX_HASHMAP_EACH_VALUE(src->gates, gate_t *gate) {
+		gate_t *new_gate = gate_copy(gate);
+
+		hex_hashmap_add_item(&dest->gates, new_gate->name, new_gate);
+	}
+
+	// Copy connections
+	HEX_HASHMAP_EACH_VALUE(src->gates, gate_t *old_gate) {
+		gate_t *new_gate = circuit_get_gate_by_name(dest, old_gate->name);
+
+		VEC_EACH(old_gate->ports, port_t *old_port) {
+			port_t *new_port = gate_get_port_by_name(new_gate, old_port->name);
+
+			VEC_EACH(old_port->connections, port_t *old_port_conn) {
+				// Get corresponding new gate
+				gate_t *old_port_conn_gate = old_port_conn->gate;
+				gate_t *new_port_conn_gate = circuit_get_gate_by_name(dest, old_port_conn_gate->name);
+
+				// Get corresponding new port
+				port_t *new_port_conn = gate_get_port_by_name(new_port_conn_gate, old_port_conn->name);
+
+				// Create new connection
+				vector_push(&new_port->connections, new_port_conn);
+			}
+		}
+	}
+
+
+	FUNC_END();
+	return dest;
+}
+
+
+
+void circuit_print(circuit_t *circ, unsigned int depth) {
 	assert_not_null(circ);
 
-	printf("Circuit %s: %lu gates\n\n", circ->name, hex_hashmap_amount(&circ->gates));
+	// Create prefix
+	char prefix[16];
+	memset(prefix, 0, 16);
+	memset(prefix, '\t', depth);
 
-	HEX_HASHMAP_EACH_VALUE_INDEX(circ->gates, gate_t *gate, i) {
-		printf("gate %lu: ", i);
 
-		gate_print(gate);
+	HEX_HASHMAP_EACH_VALUE(circ->gates, gate_t *gate) {
+		printf("%s\t", prefix);
+		gate_print(gate, depth);
 		printf("\n");
 	}
 }

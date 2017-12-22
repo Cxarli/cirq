@@ -2,12 +2,27 @@
 #include "test.h"
 
 
+#define DEBUG_PRINT_GATE(name) \
+	printf("\t"); gate_print(circuit_get_gate_by_name(&fa_circ, name), 0); printf("\n"); \
+
+#define DEBUG_PRINT() \
+	DEBUG_PRINT_GATE("0e36e9ea"); \
+	DEBUG_PRINT_GATE("63f0d9e3"); \
+	DEBUG_PRINT_GATE("b9f8820d"); \
+	\
+	DEBUG_PRINT_GATE("2c9ced3a"); \
+	DEBUG_PRINT_GATE("57f26486"); \
+	\
+	DEBUG_PRINT_GATE("3752723b"); \
+	DEBUG_PRINT_GATE("45243a79"); \
+	\
+	DEBUG_PRINT_GATE("e16e5e97"); \
+
+
 test_result_t test_full_adder(void) {
 	TEST_START;
 
 	// Create circuit
-	circuit_t xor_circ;
-	circuit_init(&xor_circ);
 	circuit_t ha_circ;
 	circuit_init(&ha_circ);
 	circuit_t fa_circ;
@@ -17,10 +32,7 @@ test_result_t test_full_adder(void) {
 	vector_init(&deps, 4);
 
 	// Read templates
-	assert_true(read_template("tests/xor", &xor_circ, NULL));
-	assert_true(vector_push(&deps, &xor_circ));
-
-	assert_true(read_template("tests/half_adder", &ha_circ, &deps));
+	assert_true(read_template("tests/half_adder", &ha_circ, NULL));
 	assert_true(vector_push(&deps, &ha_circ));
 
 	assert_true(read_template("tests/full_adder", &fa_circ, &deps));
@@ -132,7 +144,6 @@ test_result_t test_full_adder(void) {
 	// Free everything
 	circuit_free(&fa_circ);
 	circuit_free(&ha_circ);
-	circuit_free(&xor_circ);
 	vector_free(&deps);
 
 	TEST_END;

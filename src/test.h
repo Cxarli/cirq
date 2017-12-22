@@ -91,6 +91,7 @@ test_result_t test_half_adder(void);
 test_result_t test_full_adder(void);
 
 test_result_t test_not_loop(void);
+test_result_t test_nested(void);
 
 
 #endif

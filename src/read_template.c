@@ -131,6 +131,9 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 	fclose(file);
 
 
+	// circuit_print(circ, 0);
+
+
 	// Make sure all gates are in the right state
 	// NOTE: This will crash if a contradicting loop occurs in the program
 	//   example: NOT:I0 <---> NOT:O0

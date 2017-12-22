@@ -104,13 +104,19 @@ test_result_t hhmtest(void) {
 
 
 	// Test macros
+	unsigned int amount = 0;
+
 	HEX_HASHMAP_EACH_KEY_VALUE(map, char *name, item_t *item) {
 		assert_not_null(name);
 		assert_not_null(item);
 
 		// Check bounds of value
 		assert_true(item->value >= 0 && item->value <= 7);
+
+		amount++;
 	}
+
+	assert_eq(amount, 8);
 
 
 
