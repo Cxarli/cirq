@@ -1,9 +1,8 @@
 #include "benchmark.h"
 
-#include <stdio.h>
+#include "defines.h"
+
 #include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
 
 
 void BENCH_ADD(const char func[], double effective_time, double actual_time) {
@@ -23,7 +22,7 @@ void BENCH_ADD(const char func[], double effective_time, double actual_time) {
 	int i = 0;
 	double act = 0.0;
 
-	char *f = malloc(100 * sizeof(char));
+	char *f = malloc(BUF_SIZE);
 
 	while (true) {
 		// Get old data

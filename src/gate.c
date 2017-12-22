@@ -1,6 +1,5 @@
 #include "gate.h"
 
-#include "circuit.h"
 #include "assert.h"
 #include "benchmark.h"
 #include "utils.h"
@@ -37,9 +36,9 @@ bool gate_add_port(gate_t *gate, unsigned int i, char *name, PortType_t type) {
 
 	if (name == NULL) {
 		// Set default name format
-		name = malloc(BUF_SIZE * sizeof(char));
-
+		name = malloc(BUF_SIZE);
 		char typechar = (type == PortType_INPUT) ? 'I' : 'O';
+
 		sprintf(name, "%c%i", typechar, i);
 	}
 
@@ -61,41 +60,17 @@ bool gate_add_port(gate_t *gate, unsigned int i, char *name, PortType_t type) {
 
 
 bool gate_add_input(gate_t *gate, unsigned int i, char *name) {
-	FUNC_START();
-
-	FUNC_PAUSE();
-	bool success = gate_add_port(gate, i, name, PortType_INPUT);
-	FUNC_RESUME();
-
-
-	FUNC_END();
-	return success;
+	return gate_add_port(gate, i, name, PortType_INPUT);
 }
 
 
 bool gate_add_output(gate_t *gate, unsigned int i, char *name) {
-	FUNC_START();
-
-	FUNC_PAUSE();
-	bool success = gate_add_port(gate, i, name, PortType_OUTPUT);
-	FUNC_RESUME();
-
-
-	FUNC_END();
-	return success;
+	return gate_add_port(gate, i, name, PortType_OUTPUT);
 }
 
 
 bool gate_add_node(gate_t *gate, char *name) {
-	FUNC_START();
-
-	FUNC_PAUSE();
-	bool success = gate_add_port(gate, 0, name, PortType_NODE);
-	FUNC_RESUME();
-
-
-	FUNC_END();
-	return success;
+	return gate_add_port(gate, 0, name, PortType_NODE);
 }
 
 
@@ -233,35 +208,47 @@ bool gate_link_inner_circuit(gate_t *gate) {
 
 		// Get old portname
 		char *portname = inner_port->name;
-		assert_not_null(portname);
 
 		// Copy portname
-		char *newportname = malloc(sizeof(portname) * sizeof(char));
+		char *newportname = malloc(strlen(portname) + 1);
 		strcpy(newportname, portname);
 
 		// Add new port
+		FUNC_PAUSE();
 		success &= gate_add_node(gate, newportname);
+		FUNC_RESUME();
+
 
 		// Copy connections
 		port_t *node = gate->ports.items[gate->ports.amount - 1];
+
+		FUNC_PAUSE();
 		assert(vector_copy(&node->connections, &inner_port->connections));
+		FUNC_RESUME();
+
 
 		VEC_EACH(inner_port->connections, port_t *conn) {
 			// Remove old links to the outer gate
 			VEC_EACH(conn->connections, port_t *inner_conn) {
 				if (inner_conn == inner_port) {
+					FUNC_PAUSE();
 					assert(vector_remove(&conn->connections, inner_port));
+					FUNC_RESUME();
 				}
 			}
 
 			// ... but redirect them to the node directly
+			FUNC_PAUSE();
 			assert(vector_push(&conn->connections, node));
+			FUNC_RESUME();
 		}
 
 		// Remove IO gate from inner circuit
-		hex_hashmap_remove_item(&gate->inner_circuit->gates, inner_gate->name);
+		FUNC_PAUSE();
+		assert(hex_hashmap_remove_item(&gate->inner_circuit->gates, inner_gate->name));
 		gate_free(inner_gate);
 		free(inner_gate);
+		FUNC_RESUME();
 	}
 
 
@@ -272,6 +259,9 @@ bool gate_link_inner_circuit(gate_t *gate) {
 
 bool gate_update_state(gate_t *gate) {
 	FUNC_START();
+
+	assert_not_null(gate);
+
 
 	switch_str(gate->type) {
 		case_str("AND") {
@@ -402,56 +392,10 @@ bool gate_update_state(gate_t *gate) {
 				return false;
 			}
 
-			bool success = true;
-
-			/*
-			// Mirror outer gate state to inner circuit
-			VEC_EACH(gate->ports, port_t *port) {
-				// Filter on input only
-				if (port->type != PortType_INPUT) {
-					continue;
-				}
-
-				FUNC_PAUSE();
-
-				// Get matching inner port
-				port_t *inner_port = circuit_get_io_port_by_name(gate->inner_circuit, port->name);
-
-				// Copy outer state to inner port
-				success &= port_set_state(inner_port, port->state);
-
-				FUNC_RESUME();
-			}
-			*/
-
-			/*
-			// Update inner circuit
-			FUNC_PAUSE();
-			success &= circuit_update_state(gate->inner_circuit);
-			FUNC_RESUME();
-			*/
-
-			/*
-			// Mirror inner circuit state to outer gate
-			HEX_HASHMAP_EACH_VALUE(gate->inner_circuit->gates, gate_t *inner_gate) {
-				// Filter on output only
-				if (strcmp(inner_gate->type, "OUT") != 0) {
-					continue;
-				}
-
-				port_t *inner_port = inner_gate->ports.items[0];
-
-				FUNC_PAUSE();
-				port_t *outer_port = gate_get_port_by_name(gate, inner_port->name);
-
-				outer_port->state = inner_port->state;
-				FUNC_RESUME();
-			}
-			*/
-
+			// Everything should get handled automatically :)
 
 			FUNC_END();
-			return success;
+			return true;
 		}
 	}
 
@@ -464,12 +408,7 @@ bool gate_update_state(gate_t *gate) {
 
 
 bool gate_is_io(gate_t *gate) {
-	FUNC_START();
-
-	bool is_io = strcmp(gate->type, "IN") == 0 || strcmp(gate->type, "OUT") == 0;
-
-	FUNC_END();
-	return is_io;
+	return strcmp(gate->type, "IN") == 0 || strcmp(gate->type, "OUT") == 0;
 }
 
 
@@ -478,32 +417,40 @@ gate_t *gate_copy(gate_t *src) {
 
 	assert_not_null(src);
 
+	// Create new gate
 	gate_t *dest = malloc(sizeof(gate_t));
 	gate_init(dest);
 
 	// Copy name
-	dest->name = malloc(sizeof(src->name) + 1);
+	dest->name = malloc(strlen(src->name) + 1);
 	strcpy(dest->name, src->name);
 
 	// Copy type
-	dest->type = malloc(sizeof(src->type) + 1);
+	dest->type = malloc(strlen(src->type) + 1);
 	strcpy(dest->type, src->type);
 
 	// Copy inner circuit if any
 	if (src->inner_circuit != NULL) {
+		FUNC_PAUSE();
 		dest->inner_circuit = circuit_copy(src->inner_circuit);
+		FUNC_RESUME();
 	}
 
 	// Copy ports
 	VEC_EACH(src->ports, port_t *port) {
 		assert_not_null(port);
 
+		FUNC_PAUSE();
 		port_t *new_port = port_copy(port);
+		FUNC_RESUME();
 
 		new_port->gate = dest;
 
-		vector_push(&dest->ports, new_port);
+		FUNC_PAUSE();
+		assert(vector_push(&dest->ports, new_port));
+		FUNC_RESUME();
 	}
+
 
 	FUNC_END();
 	return dest;

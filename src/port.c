@@ -42,6 +42,7 @@ bool port_update_state(port_t *port) {
 bool port_set_state(port_t *port, bool state) {
 	FUNC_START();
 
+	// Check if state already matches
 	if (port->state == state) {
 		// Don't change anything
 		FUNC_END();
@@ -66,7 +67,7 @@ port_t *port_copy(port_t *src) {
 	port_t *dest = malloc(sizeof(port_t));
 	port_init(dest);
 
-	dest->name = malloc(sizeof(src->name) + 1);
+	dest->name = malloc(strlen(src->name) + 1);
 	strcpy(dest->name, src->name);
 
 	dest->state = src->state;

@@ -82,6 +82,9 @@ typedef struct test_result {
 
 
 
+unsigned int test_all(int argc, char *argv[]);
+
+
 test_result_t test_nand(void);
 test_result_t test_nor(void);
 test_result_t test_xand(void);

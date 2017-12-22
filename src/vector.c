@@ -8,7 +8,6 @@ bool vector_push(vector_t *vec, void *item) {
 	FUNC_START();
 
 	assert_not_null(vec);
-
 	// NOTE: Blocks vectors from containing NULL
 	assert_not_null(item);
 
@@ -35,7 +34,9 @@ bool vector_copy(vector_t *dest, vector_t *src) {
 	bool success = true;
 
 	VEC_EACH(*src, void *item) {
+		FUNC_PAUSE();
 		success &= vector_push(dest, item);
+		FUNC_RESUME();
 	}
 
 	FUNC_END();
@@ -61,11 +62,12 @@ bool vector_remove(vector_t *vec, void *item) {
 		return false;
 	}
 
-	// Shift all items after the give item 1 to the left
+	// Shift all items after the given item 1 to the left
 	for (size_t j = i + 1; j < vec->amount + 1; j++) {
 		vec->items[j - 1] = vec->items[j];
 	}
 
+	// Decrease amount
 	vec->amount--;
 
 	FUNC_END();

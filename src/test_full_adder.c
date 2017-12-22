@@ -2,21 +2,21 @@
 #include "test.h"
 
 
-#define DEBUG_PRINT_GATE(name) \
-	printf("\t"); gate_print(circuit_get_gate_by_name(&fa_circ, name), 0); printf("\n"); \
+#if DEBUG_ON
+	#define DEBUG_PRINT() \
+		DEBUG_PRINT_GATE(fa_circ, "0e36e9ea"); \
+		DEBUG_PRINT_GATE(fa_circ, "63f0d9e3"); \
+		DEBUG_PRINT_GATE(fa_circ, "b9f8820d"); \
+		\
+		DEBUG_PRINT_GATE(fa_circ, "2c9ced3a"); \
+		DEBUG_PRINT_GATE(fa_circ, "57f26486"); \
+		\
+		DEBUG_PRINT_GATE(fa_circ, "3752723b"); \
+		DEBUG_PRINT_GATE(fa_circ, "45243a79"); \
+		\
+		DEBUG_PRINT_GATE(fa_circ, "e16e5e97"); \
 
-#define DEBUG_PRINT() \
-	DEBUG_PRINT_GATE("0e36e9ea"); \
-	DEBUG_PRINT_GATE("63f0d9e3"); \
-	DEBUG_PRINT_GATE("b9f8820d"); \
-	\
-	DEBUG_PRINT_GATE("2c9ced3a"); \
-	DEBUG_PRINT_GATE("57f26486"); \
-	\
-	DEBUG_PRINT_GATE("3752723b"); \
-	DEBUG_PRINT_GATE("45243a79"); \
-	\
-	DEBUG_PRINT_GATE("e16e5e97"); \
+#endif
 
 
 test_result_t test_full_adder(void) {
@@ -75,6 +75,10 @@ test_result_t test_full_adder(void) {
 	assert_eq(i1->state, false);
 	assert_eq(ici->state, false);
 
+	#if DEBUG_ON
+		DEBUG_PRINT()
+	#endif
+
 	// A B C -> C S
 	// 0 0 0 -> 0 0
 	port_set_state(i0, false);
@@ -82,8 +86,6 @@ test_result_t test_full_adder(void) {
 	port_set_state(ici, false);
 	assert_eq(oco->state, false);
 	assert_eq(os->state, false);
-	printf("0 0 0\n");
-	DEBUG_PRINT();
 
 	// A B C -> C S
 	// 0 0 1 -> 0 1
@@ -92,8 +94,6 @@ test_result_t test_full_adder(void) {
 	port_set_state(ici, true);
 	assert_eq(oco->state, false);
 	assert_eq(os->state, true);
-	printf("0 0 1\n");
-	DEBUG_PRINT();
 
 	// A B C -> C S
 	// 0 1 0 -> 0 1
@@ -102,8 +102,6 @@ test_result_t test_full_adder(void) {
 	port_set_state(ici, false);
 	assert_eq(oco->state, false);
 	assert_eq(os->state, true);
-	printf("0 1 0\n");
-	DEBUG_PRINT();
 
 	// A B C -> C S
 	// 0 1 1 -> 1 0
@@ -112,8 +110,6 @@ test_result_t test_full_adder(void) {
 	port_set_state(ici, true);
 	assert_eq(oco->state, true);
 	assert_eq(os->state, false);
-	printf("0 1 1\n");
-	DEBUG_PRINT();
 
 	// A B C -> C S
 	// 1 0 0 -> 0 1
@@ -122,8 +118,6 @@ test_result_t test_full_adder(void) {
 	port_set_state(ici, false);
 	assert_eq(oco->state, false);
 	assert_eq(os->state, true);
-	printf("1 0 0\n");
-	DEBUG_PRINT();
 
 	// A B C -> C S
 	// 1 0 1 -> 1 0
@@ -132,8 +126,6 @@ test_result_t test_full_adder(void) {
 	port_set_state(ici, true);
 	assert_eq(oco->state, true);
 	assert_eq(os->state, false);
-	printf("1 0 1\n");
-	DEBUG_PRINT();
 
 	// A B C -> C S
 	// 1 1 0 -> 1 0
@@ -142,8 +134,6 @@ test_result_t test_full_adder(void) {
 	port_set_state(ici, false);
 	assert_eq(oco->state, true);
 	assert_eq(os->state, false);
-	printf("1 1 0\n");
-	DEBUG_PRINT();
 
 	// A B C -> C S
 	// 1 1 1 -> 1 1
@@ -152,8 +142,6 @@ test_result_t test_full_adder(void) {
 	port_set_state(ici, true);
 	assert_eq(oco->state, true);
 	assert_eq(os->state, true);
-	printf("1 1 1\n");
-	DEBUG_PRINT();
 
 
 	// Free everything

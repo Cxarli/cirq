@@ -2,6 +2,20 @@
 #include "test.h"
 
 
+#if DEBUG_ON
+	#define DEBUG_PRINT() \
+		DEBUG_PRINT_GATE(notor2, "243a080a"); \
+		DEBUG_PRINT_GATE(notor2, "a3b247c8"); \
+		DEBUG_PRINT_GATE(notor2, "8edeefd9"); \
+		\
+		DEBUG_PRINT_GATE(notor2, "751a7396"); \
+		\
+		DEBUG_PRINT_GATE(notor2, "a0055d19"); \
+		DEBUG_PRINT_GATE(notor2, "8a8bda59"); \
+
+#endif
+
+
 test_result_t test_nested(void) {
 	TEST_START;
 
@@ -35,19 +49,6 @@ test_result_t test_nested(void) {
 	8a8bda59 notor
 	*/
 
-	#define DEBUG_PRINT_GATE(name) \
-		printf("\t"); gate_print(circuit_get_gate_by_name(&notor2, name), 1); printf("\n"); \
-
-	#define DEBUG_PRINT() \
-		DEBUG_PRINT_GATE("243a080a"); \
-		DEBUG_PRINT_GATE("a3b247c8"); \
-		DEBUG_PRINT_GATE("8edeefd9"); \
-		\
-		DEBUG_PRINT_GATE("751a7396"); \
-		\
-		DEBUG_PRINT_GATE("a0055d19"); \
-		DEBUG_PRINT_GATE("8a8bda59"); \
-
 	port_t *i0 = circuit_get_port_by_name(&notor2, "243a080a", "I0");
 	port_t *i1 = circuit_get_port_by_name(&notor2, "a3b247c8", "I1");
 	port_t *o0 = circuit_get_port_by_name(&notor2, "8edeefd9", "O0");
@@ -65,6 +66,10 @@ test_result_t test_nested(void) {
 	// Make sure default inputs are false
 	assert_eq(i0->state, false);
 	assert_eq(i1->state, false);
+
+	#if DEBUG_ON
+		DEBUG_PRINT()
+	#endif
 
 	// Try something
 	port_set_state(i0, false);

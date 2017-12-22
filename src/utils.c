@@ -9,15 +9,23 @@
 
 // Redirect stdout to stderr
 void STDOUT_TO_STDERR(void) {
+	FUNC_START();
+
 	fflush(stdout);
 	dup2(2, 1);
+
+	FUNC_END();
 }
 
 
 // Reset the redirection from stdout to stderr
 void RESET_STDOUT(void) {
+	FUNC_START();
+
 	fflush(stderr);
 	dup2(1, 1);
+
+	FUNC_END();
 }
 
 

@@ -2,7 +2,6 @@
 
 #include "assert.h"
 #include "benchmark.h"
-#include "hex_hashmap.h"
 
 
 bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
@@ -22,7 +21,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
 	// Get name, which is always the first thing in a file
 	// example: NAND
-	circ->name = malloc(BUF_SIZE * sizeof(char));
+	circ->name = malloc(BUF_SIZE);
 	fscanf(file, "%s\n", circ->name);
 
 
@@ -40,9 +39,9 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
 
 	for (size_t i = 0; i < amount_gates; i++) {
-		char *name = malloc(BUF_SIZE * sizeof(char));
-		char *type = malloc(BUF_SIZE * sizeof(char));
-		char *portname = malloc(BUF_SIZE * sizeof(char));
+		char *name = malloc(BUF_SIZE);
+		char *type = malloc(BUF_SIZE);
+		char *portname = malloc(BUF_SIZE);
 
 		// Get data
 		// example:  5cf6cdaa IN #I0
@@ -72,10 +71,10 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 		// Set the correct ports
 		FUNC_PAUSE();
 		success &= gate_set_ports(g, portname, dependencies);
-		FUNC_RESUME();
 
 		// Add gate to circuit
 		assert(hex_hashmap_add_item(&circ->gates, g->name, g));
+		FUNC_RESUME();
 	}
 
 
@@ -93,10 +92,10 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 
 
 	for (size_t i = 0; i < amount_wires; i++) {
-		char *leftuuid = malloc(BUF_SIZE * sizeof(char));
-		char *leftport = malloc(BUF_SIZE * sizeof(char));
-		char *rightuuid = malloc(BUF_SIZE * sizeof(char));
-		char *rightport = malloc(BUF_SIZE * sizeof(char));
+		char *leftuuid = malloc(BUF_SIZE);
+		char *leftport = malloc(BUF_SIZE);
+		char *rightuuid = malloc(BUF_SIZE);
+		char *rightport = malloc(BUF_SIZE);
 
 		// example:  da2ecd25:O0 eec2fc01:I0
 		int x = fscanf(file, "%[a-f0-9]:%s %[a-f0-9]:%s\n", leftuuid, leftport, rightuuid, rightport);

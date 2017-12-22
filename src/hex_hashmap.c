@@ -9,6 +9,7 @@ size_t hex_hashmap_get_list_index_for_name(char *name) {
 
 	assert_not_null(name);
 
+	// Get first character
 	char c = name[0];
 
 	if (c >= '0' && c <= '9') {
@@ -21,7 +22,8 @@ size_t hex_hashmap_get_list_index_for_name(char *name) {
 		return (size_t) (c - 'a' + 10);
 	}
 
-	panic("Failed to calculate index for name '%s'", name);
+
+	warn("Failed to calculate index for name '%s'", name);
 
 	FUNC_END();
 	return (size_t) -1;
@@ -30,10 +32,13 @@ size_t hex_hashmap_get_list_index_for_name(char *name) {
 
 hex_hashmap_list_t *hex_hashmap_get_list(hex_hashmap_t *map, char *name) {
 	FUNC_START();
+
 	assert_not_null(map);
 	assert_not_null(name);
 
+
 	hex_hashmap_list_t *list = map->items[hex_hashmap_get_list_index_for_name(name)];
+
 
 	FUNC_END();
 	return list;
@@ -46,8 +51,12 @@ void *hex_hashmap_get_item(hex_hashmap_t *map, char *name) {
 	assert_not_null(map);
 	assert_not_null(name);
 
+
+	FUNC_PAUSE();
 	hex_hashmap_list_t *list = hex_hashmap_get_list(map, name);
 	void *item = hex_hashmap_list_get_item(list, name);
+	FUNC_RESUME();
+
 
 	FUNC_END();
 	return item;
@@ -62,15 +71,20 @@ bool hex_hashmap_add_item(hex_hashmap_t *map, char *name, void *value) {
 	// NOTE: Not allowing NULL value
 	assert_not_null(value);
 
+
+	FUNC_PAUSE();
 	hex_hashmap_list_t *list = hex_hashmap_get_list(map, name);
 	assert_not_null(list);
+	FUNC_RESUME();
 
-	// Don't allow duplicates
+
+	// NOTE: Don't allow duplicates
 	if (hex_hashmap_list_contains_item(list, name)) {
 		panic("Can not add item: already in map");
 		FUNC_END();
 		return NULL;
 	}
+
 
 	FUNC_PAUSE();
 	bool success = hex_hashmap_list_add_item(list, name, value);
@@ -87,10 +101,10 @@ bool hex_hashmap_remove_item(hex_hashmap_t *map, char *name) {
 	assert_not_null(map);
 	assert_not_null(name);
 
+	FUNC_PAUSE();
 	hex_hashmap_list_t *list = hex_hashmap_get_list(map, name);
 	assert_not_null(list);
 
-	FUNC_PAUSE();
 	bool success = hex_hashmap_list_remove_item(map, list, name);
 	FUNC_RESUME();
 
@@ -127,9 +141,11 @@ void *hex_hashmap_list_get_item(hex_hashmap_list_t *list, char *name) {
 
 	hex_hashmap_list_t *item = list;
 
+
 	if (item->name == NULL) {
 		goto fail;
 	}
+
 
 	while (item != NULL) {
 		if (strcmp(item->name, name) == 0) {
@@ -156,9 +172,11 @@ bool hex_hashmap_list_remove_item(hex_hashmap_t *map, hex_hashmap_list_t *list, 
 
 	hex_hashmap_list_t *item = list;
 
+
 	if (item->name == NULL) {
 		goto notfound;
 	}
+
 
 	// Check if first item
 	if (strcmp(item->name, name) == 0) {
@@ -204,10 +222,12 @@ bool hex_hashmap_list_contains_item(hex_hashmap_list_t *list, char *name) {
 
 	hex_hashmap_list_t *item = list;
 
+
 	if (item->name == NULL) {
 		FUNC_END();
 		return false;
 	}
+
 
 	while (item != NULL) {
 		if (strcmp(item->name, name) == 0) {
@@ -232,6 +252,7 @@ bool hex_hashmap_list_add_item(hex_hashmap_list_t *list, char *name, void *value
 	// NOTE: Not allowing NULL value
 	assert_not_null(value);
 
+
 	// First item
 	if (list->name == NULL) {
 		// Replace first item
@@ -242,6 +263,7 @@ bool hex_hashmap_list_add_item(hex_hashmap_list_t *list, char *name, void *value
 		return true;
 	}
 
+
 	// Create new item
 	hex_hashmap_list_t *item = malloc(sizeof(hex_hashmap_list_t));
 	hex_hashmap_list_init(item);
@@ -250,7 +272,9 @@ bool hex_hashmap_list_add_item(hex_hashmap_list_t *list, char *name, void *value
 	item->value = value;
 
 	// Add item to list
+	FUNC_PAUSE();
 	hex_hashmap_list_t *last = hex_hashmap_list_get_last(list);
+	FUNC_RESUME();
 
 	last->next = item;
 
@@ -266,15 +290,18 @@ hex_hashmap_list_t *hex_hashmap_list_get_last(hex_hashmap_list_t *list) {
 
 	hex_hashmap_list_t *last = list;
 
+
 	if (last == NULL) {
 		warn("Failed to get last item of list: lits doesn't have any items");
 		FUNC_END();
 		return NULL;
 	}
 
+
 	while (last->next != NULL) {
 		last = last->next;
 	}
+
 
 	FUNC_END();
 	return last;

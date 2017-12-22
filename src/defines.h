@@ -4,22 +4,33 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 
 // The default size for buffers, vectors, etc
 #define BUF_SIZE 256
 
+// Enable or disable debugging
+#define DEBUG_ON false
 
-// Comment the next line to enable debugging statements
-#define DEBUG
 
-#ifndef DEBUG
-	#define DEBUG printf("DEBUG %s:%i %s\n", __FILE__, __LINE__, __FUNCTION__)
+#if DEBUG_ON
+	#define DEBUG \
+		printf("DEBUG %s:%i %s\n", __FILE__, __LINE__, __FUNCTION__)
+
+	#define DEBUG_PRINT_PORT(p) \
+		printf("<0x%04x> %s{%s}:%s\n", (0xffff & (unsigned int) p->gate), p->gate->name, p->gate->type, p->name);
+
+
+	#define DEBUG_PRINT_GATE(circ, name) { \
+		printf("\t"); \
+		gate_print(circuit_get_gate_by_name(&circ, name), 0); \
+		printf("\n"); \
+	}
+
+#else
+	#define DEBUG
 #endif
-
-
-#define DEBUG_PRINT_PORT(p) \
-	printf("<0x%04x> %s{%s}:%s\n", (0xffff & (unsigned int) p->gate), p->gate->name, p->gate->type, p->name);
 
 
 #define CONCAT_(x, y) x ## y
