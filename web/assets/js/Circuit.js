@@ -16,8 +16,9 @@ Circuit.prototype.generateJSON = function() {
     // Add gates to output
     LOOP_OBJ(this.gates).forEach((uuid, gate) => {
         output.gates[uuid] = {
-            // Only store type
+            // Only store type and the names of the ports
             type: gate.type,
+            ports: LOOP_OBJ(gate.ports).map((_, port) => ({ name: port.name })).removeLoop(),
         };
     });
 

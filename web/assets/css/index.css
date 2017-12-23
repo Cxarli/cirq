@@ -109,6 +109,10 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #003;
 }
 
+.gate.gate-XOR {
+    background-color: #033;
+}
+
 .gate.gate-NOT {
     background-color: #303;
 }
