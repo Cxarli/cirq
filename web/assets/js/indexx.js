@@ -50,16 +50,16 @@ function getAllIONamesFromGates(gates) {
 
 function createCustomGateFromCurrentCircuit() {
     let type = prompt("Type?");
-    if ( type === null ) return;
+    if (! type) return false;
 
     let bgcolor = prompt("Color?");
-    if ( bgcolor === null ) return;
+    if (! bgcolor) return false;
 
     let circuit = new Circuit(CLONE(window._gates), CLONE(window._wires));
 
     // Make sure all in- and outputs have names
     let ionames = getAllIONamesFromGates(window._gates);
-    if (ionames == false) return;
+    if (ionames === false) return;
 
 
     // Create new gate
@@ -144,7 +144,7 @@ function generateJSON() {
     let circuit = new Circuit(CLONE(window._gates), CLONE(window._wires));
 
     // Make sure all IO ports have names
-    if (getAllIONamesFromGates(window._gates) == false) return;
+    if (getAllIONamesFromGates(window._gates) === false) return;
 
     // Get custom gates
     let customGates = window._customGates;
@@ -154,8 +154,7 @@ function generateJSON() {
         .removeLoop();
 
     let name = prompt("Enter a name for this circuit: ");
-
-    if (! name) return;
+    if (! name) return false;
 
     return {
         name: name,
@@ -167,6 +166,8 @@ function generateJSON() {
 
 function generateFile(json) {
     let output = "";
+
+    if (json === false) return false;
 
     /*
     full_adder
