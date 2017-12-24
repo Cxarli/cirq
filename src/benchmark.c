@@ -3,11 +3,16 @@
 #include "defines.h"
 
 #include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 
 void BENCH_ADD(const char func[], double effective_time, double actual_time) {
 	char *bench_file_name = "/tmp/bench";
 	char *temp_file_name = "/tmp/bench.tmp";
+
+	// Create bench_file_name file
+	close(open(bench_file_name, O_RDONLY | O_CREAT, 0666));
 
 	FILE *in = fopen(bench_file_name, "r");
 	FILE *out = fopen(temp_file_name, "a");
