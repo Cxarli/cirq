@@ -7,7 +7,7 @@ html, body {
 
 
 html {
-    background-color: #020;
+    background-color: #2a130d;
 
     font-family: monospace;
     text-transform: uppercase;
@@ -102,19 +102,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .gate.gate-AND {
-    background-color: #300;
+    background-color: #500;
 }
 
 .gate.gate-OR {
-    background-color: #003;
+    background-color: #005;
 }
 
 .gate.gate-XOR {
-    background-color: #033;
+    background-color: #055;
 }
 
 .gate.gate-NOT {
-    background-color: #303;
+    background-color: #505;
 }
 
 .gate.gate-IN {

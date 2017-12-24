@@ -12,7 +12,7 @@ function Gate(type, _in, _out) {
     this.uuid = guid();
     this.ports = { };
 
-    // Always 1 extra spot for the color
+    // Always 1 extra spot for the color to show
     let amount_ports = _in + _out + 1;
 
     // Calculate dimensions
@@ -23,14 +23,14 @@ function Gate(type, _in, _out) {
     for (let i=0; i < _in; i++) {
         // Default name
         let name = 'I' + i;
-        this.ports[name] = new Port(this, name, this.PORT_WIDTH);
+        this.ports[name] = new Port(this, i, Port.TYPE_ENUM.IN, name, this.PORT_WIDTH);
     }
 
     // Add out-ports
     for (let i=0; i < _out; i++) {
         // Default name
         let name = 'O' + i;
-        this.ports[name] = new Port(this, name, this.PORT_WIDTH);
+        this.ports[name] = new Port(this, i, Port.TYPE_ENUM.OUT, name, this.PORT_WIDTH);
     }
 
     window._gates[this.uuid] = this;

@@ -8,11 +8,6 @@ require.config({
             deps: [ ]
         },
 
-        CustomGate: {
-            deps: [ 'utils' ],
-            exports: 'CustomGate',
-        },
-
         Template: {
             deps: [ 'utils' ],
             exports: 'Template',
@@ -33,6 +28,11 @@ require.config({
             exports: 'Port',
         },
 
+        CustomGate: {
+            deps: [ 'utils', 'Template' ],
+            exports: 'CustomGate',
+        },
+
         Gate: {
             deps: [ 'Port', 'utils' ],
             exports: 'Gate',
@@ -43,11 +43,11 @@ require.config({
         },
 
         dragAndDropEvents: {
-            deps: [ 'Gate', 'Wire', 'utils' ],
+            deps: [ 'Gate', 'Wire', 'Port', 'utils' ],
         },
 
         indexx: {
-            deps: [ 'dragAndDropEvents', 'wireEvents', 'Circuit', 'CustomGate', 'Template', 'utils', 'Wire', 'Gate' ],
+            deps: [ 'dragAndDropEvents', 'wireEvents', 'Circuit', 'CustomGate', 'utils', 'Wire', 'Gate' ],
         },
     },
 });

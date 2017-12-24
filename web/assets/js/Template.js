@@ -1,5 +1,7 @@
 /* global LOOP_OBJ, define */
 
+window.GATE_INNER_TEMPLATE = new Template("{{TYPE}}<br>&nbsp; &lt; {{IN}}<br>&nbsp; &gt; {{OUT}}");
+
 
 function Template(html) {
     this.html = html;

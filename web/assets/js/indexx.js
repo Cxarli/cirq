@@ -1,21 +1,4 @@
-/* globals Circuit, CustomGate, Template, HTMLToElem, LOOP_OBJ, CLONE */
-
-
-const GATE_INNER_TEMPLATE = new Template("{{TYPE}}<br>&nbsp; &lt; {{IN}}<br>&nbsp; &gt; {{OUT}}");
-
-const CUSTOM_GATE_TEMPLATE = new Template(
-    '<div' +
-    ' class="gate gate-custom gate-{{TYPE}}"'+
-    ' style="background-color: {{BGCOLOR}}"' +
-    ' draggable="true"' +
-    ' data-clone="true"' +
-    ' data-type="{{TYPE}}"' +
-    ' data-in="{{IN}}"' +
-    ' data-out="{{OUT}}">' +
-    GATE_INNER_TEMPLATE.html +
-    '</div>'
-);
-
+/* globals Circuit, CustomGate, LOOP_OBJ, CLONE */
 
 window._customGates = [];
 
@@ -23,6 +6,7 @@ window._customGates = [];
 function getAllIONamesFromGates(gates) {
     let failed = false;
     let ionames = {};
+
 
     LOOP_OBJ(gates).forEach((uuid, gate) => {
         if (failed) return;
@@ -43,18 +27,22 @@ function getAllIONamesFromGates(gates) {
         }
     });
 
+
     if (failed) return false;
     return ionames;
 }
 
 
 function createCustomGateFromCurrentCircuit() {
+    // Get missing information
     let type = prompt("Type?");
     if (! type) return false;
 
     let bgcolor = prompt("Color?");
     if (! bgcolor) return false;
 
+
+    // Create new circuit
     let circuit = new Circuit(CLONE(window._gates), CLONE(window._wires));
 
     // Make sure all in- and outputs have names
@@ -64,21 +52,13 @@ function createCustomGateFromCurrentCircuit() {
 
     // Create new gate
     let newgate = new CustomGate(type, ionames, circuit);
+    newgate.bgcolor = bgcolor;
+
     window._customGates[type] = newgate;
     console.log(newgate);
 
-
     // Create element
-    // TODO: Move logic to CustomGate.js
-    let gateHTML = CUSTOM_GATE_TEMPLATE.apply({
-        type: type,
-        bgcolor: bgcolor,
-        in: newgate.in(),
-        out: newgate.out(),
-    });
-
-    // Add element
-    let gateElem = HTMLToElem(gateHTML);
+    let gateElem = newgate.getElement();
     document.querySelector('.toolbox .box.custom').appendChild(gateElem);
 }
 
@@ -87,7 +67,7 @@ function addInfoToGates() {
     let gates = document.querySelectorAll('.toolbox .gate');
 
     gates.forEach(gate => {
-        gate.innerHTML = GATE_INNER_TEMPLATE.apply({
+        gate.innerHTML = window.GATE_INNER_TEMPLATE.apply({
             type: gate.dataset.type,
             in: gate.dataset.in,
             out: gate.dataset.out,
@@ -197,13 +177,16 @@ function generateFile(json) {
 
     output += "\n";
 
+    // [gates] 8
     output += "[gates] " + LOOP_OBJ(json.circuit.gates).length() + "\n";
+
+
     LOOP_OBJ(json.circuit.gates).forEach(
         (uuid, gate) => {
+            // 0e36e9ea IN
             output += uuid + " " + gate.type;
 
-            console.log(gate);
-
+            //  #I0
             if (gate.type == "IN" || gate.type == "OUT") {
                 output += " #" + (gate.ports['O0'] || gate.ports['I0']).name;
             }
@@ -214,16 +197,27 @@ function generateFile(json) {
 
     output += "\n";
 
+    // [wires] 8
     output += "[wires] " + LOOP_OBJ(json.circuit.wires).length() + "\n";
-    json.circuit.wires.forEach(wire => output += wire.a + " " + wire.b + "\n");
+
+    json.circuit.wires.forEach(wire => {
+        // 0e36e9ea:I0 3752723b:I0
+        output += wire.a + " " + wire.b + "\n";
+    });
 
     output += "\n";
 
-    LOOP_OBJ(json.customGates).forEach((name, circuit) => output += generateFile({
-        name: name,
-        circuit: circuit,
-        customGates: {}
-    }) + "\n");
+    // Repeat the same function for all custom gates
+    if (json.customGates) {
+        LOOP_OBJ(json.customGates).forEach((name, circuit) => {
+            output += generateFile({
+                name: name,
+                circuit: circuit,
+            });
+
+            output += "\n";
+        });
+    }
 
     return output;
 }

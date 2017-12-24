@@ -4,15 +4,20 @@
 window._ports = {};
 
 
-function Port(gate, name, width) {
+function Port(gate, id, type, name, width) {
     this.name = name;
     this.nameset = false;
     this.gate = gate;
+    this.type = type;
+    this.id = id;
 
     this.uuid = gate.uuid + ':' + name;
-    this.type = (name.charAt(0) == 'I' ? 'IN' : 'OUT');
 
-    this.id = parseInt(name.substring(1)) + (this.type == 'OUT' ? gate.in : 0);
+    // OUT2 with 3 inputs becomes the 5th item
+    // IN2 remains the same
+    if (this.type == Port.TYPE_ENUM.OUT) {
+        this.id += gate.in;
+    }
 
     this.width = width;
 
@@ -20,11 +25,15 @@ function Port(gate, name, width) {
 }
 
 
+Port.TYPE_ENUM = { IN: 1, OUT: 2 };
+Object.freeze(Port.TYPE_ENUM);
+
+
 Port.prototype.getElement = function() {
     if (this.portElem) return this.portElem;
 
     let portElem = document.createElement('div');
-    portElem.className = 'port port-' + this.type;
+    portElem.className = 'port port-' + (this.type == Port.TYPE_ENUM.IN ? 'IN' : 'OUT');
     portElem.uuid = this.uuid;
 
     portElem.port_width = this.width;

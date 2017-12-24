@@ -1,4 +1,4 @@
-/* global Gate, redrawAllWires, LOOP_OBJ */
+/* global Gate, Port, redrawAllWires, LOOP_OBJ */
 
 
 let dragged = null;
@@ -21,6 +21,9 @@ function dragstart(event) {
 function dragend(event) {
     // element is released
     dragged = null;
+
+    // unused
+    event;
 }
 
 
@@ -36,11 +39,17 @@ function dragover(event) {
 
 function dragenter(event) {
     // element enters droppable zone
+
+    // unused
+    event;
 }
 
 
 function dragleave(event) {
     // element leaves droppable zone
+
+    // unused
+    event;
 }
 
 
@@ -61,8 +70,14 @@ function drop(event) {
                 delete window._customGates[type];
 
                 dragged = null;
-                return;
             }
+
+            return;
+        }
+
+        // Don't remove items in the toolbox
+        if (dragged.parentNode.classList.contains('box')) {
+            return;
         }
 
         // Destroy gate
@@ -70,7 +85,8 @@ function drop(event) {
         if (gate) {
             // If it's a known gate: remove it the usual way
             gate.destroy();
-        } else {
+        }
+        else {
             // Unknown gate?
             console.log("Deleting unknown gate?");
             dragged.parentNode.removeChild(dragged);
@@ -99,11 +115,12 @@ function drop(event) {
             let ins = LOOP_OBJ(customGate.circuit.gates).filter((uuid, gate) => gate.type == 'IN').values();
             let outs = LOOP_OBJ(customGate.circuit.gates).filter((uuid, gate) => gate.type == 'OUT').values();
 
+
             LOOP_OBJ(gate.ports).forEach((name, port) => {
-                if (port.type == 'IN') {
+                if (port.type == Port.TYPE_ENUM.IN) {
                     port.setName(ionames[ins.pop().uuid]);
                 }
-                else if (port.type == 'OUT') {
+                else if (port.type == Port.TYPE_ENUM.OUT) {
                     port.setName(ionames[outs.pop().uuid]);
                 }
                 else {
