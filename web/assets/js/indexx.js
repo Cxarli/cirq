@@ -1,4 +1,4 @@
-/* globals Circuit, CustomGate, LOOP_OBJ, CLONE */
+/* globals Circuit, CustomGate, LOOP_OBJ, CLONE, Gate, Wire */
 
 window._customGates = [];
 
@@ -34,14 +34,6 @@ function getAllIONamesFromGates(gates) {
 
 
 function createCustomGateFromCurrentCircuit() {
-    // Get missing information
-    let type = prompt("Type?");
-    if (! type) return false;
-
-    let bgcolor = prompt("Color?");
-    if (! bgcolor) return false;
-
-
     // Create new circuit
     let circuit = new Circuit(CLONE(window._gates), CLONE(window._wires));
 
@@ -49,6 +41,12 @@ function createCustomGateFromCurrentCircuit() {
     let ionames = getAllIONamesFromGates(window._gates);
     if (ionames === false) return;
 
+    // Get missing information
+    let type = prompt("Type?");
+    if (! type) return false;
+
+    let bgcolor = prompt("Color?");
+    if (! bgcolor) return false;
 
     // Create new gate
     let newgate = new CustomGate(type, ionames, circuit);
@@ -220,4 +218,61 @@ function generateFile(json) {
     }
 
     return output;
+}
+
+
+function loadCustomGateJSON(json) {
+    // Make sure `json` is a JSON Object
+    if (typeof json.name === 'undefined') {
+        json = JSON.parse(json);
+    }
+
+    /*
+        CustomGate(type, ionames, circuit)
+        Gate(type, _in, _out)
+        Wire(a, b)
+    */
+
+    let gates = LOOP_OBJ(json.circuit.gates).map(
+        (uuid, data) => {
+            let _in = 0, _out = 0;
+
+            // Get amount of inports and outports
+            LOOP_OBJ(data.ports).forEach((portuuid) => {
+                if (portuuid.charAt(0) == 'O') _in++;
+                else _out++;
+            });
+
+            let gate = new Gate(data.type, _in, _out);
+
+            return gate;
+        }
+    ).removeLoop();
+
+    console.log(gates);
+
+
+    let ionames = getAllIONamesFromGates(gates);
+
+    let wires = json.circuit.wires.map(
+        (data) => {
+            let wire = new Wire(gates[data.a], gates[data.b]);
+
+            return wire;
+        }
+    );
+
+    let circuit = new Circuit(gates, wires);
+
+    let custom = new CustomGate(json.name, ionames, circuit);
+
+    custom.bgcolor = prompt("Color?");
+
+
+    window._customGates[json.name] = custom;
+    console.log(custom);
+
+    // Create element
+    let gateElem = custom.getElement();
+    document.querySelector('.toolbox .box.custom').appendChild(gateElem);
 }
