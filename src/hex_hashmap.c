@@ -52,10 +52,10 @@ void *hex_hashmap_get_item(hex_hashmap_t *map, char *name) {
 	assert_not_null(name);
 
 
-	FUNC_PAUSE();
+	
 	hex_hashmap_list_t *list = hex_hashmap_get_list(map, name);
 	void *item = hex_hashmap_list_get_item(list, name);
-	FUNC_RESUME();
+	
 
 
 	FUNC_END();
@@ -72,10 +72,10 @@ bool hex_hashmap_add_item(hex_hashmap_t *map, char *name, void *value) {
 	assert_not_null(value);
 
 
-	FUNC_PAUSE();
+	
 	hex_hashmap_list_t *list = hex_hashmap_get_list(map, name);
 	assert_not_null(list);
-	FUNC_RESUME();
+	
 
 
 	// NOTE: Don't allow duplicates
@@ -86,9 +86,9 @@ bool hex_hashmap_add_item(hex_hashmap_t *map, char *name, void *value) {
 	}
 
 
-	FUNC_PAUSE();
+	
 	bool success = hex_hashmap_list_add_item(list, name, value);
-	FUNC_RESUME();
+	
 
 	FUNC_END();
 	return success;
@@ -101,12 +101,12 @@ bool hex_hashmap_remove_item(hex_hashmap_t *map, char *name) {
 	assert_not_null(map);
 	assert_not_null(name);
 
-	FUNC_PAUSE();
+	
 	hex_hashmap_list_t *list = hex_hashmap_get_list(map, name);
 	assert_not_null(list);
 
 	bool success = hex_hashmap_list_remove_item(map, list, name);
-	FUNC_RESUME();
+	
 
 	FUNC_END();
 	return success;
@@ -272,9 +272,9 @@ bool hex_hashmap_list_add_item(hex_hashmap_list_t *list, char *name, void *value
 	item->value = value;
 
 	// Add item to list
-	FUNC_PAUSE();
+	
 	hex_hashmap_list_t *last = hex_hashmap_list_get_last(list);
-	FUNC_RESUME();
+	
 
 	last->next = item;
 

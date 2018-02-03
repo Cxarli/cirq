@@ -29,6 +29,27 @@ void RESET_STDOUT(void) {
 }
 
 
+char *__LEFT_PAD_SPACE(char *dest, double x, unsigned int width) {
+	// Calculate width of number
+	unsigned int num_width = 0;
+
+	for (int y = (int) x; y >= 1; y /= 10) {
+		num_width++;
+	}
+
+	// Add spaces
+	if (width > num_width) {
+		sprintf(dest, "%*s%.f", width - num_width, " ", x);
+	}
+	else {
+		sprintf(dest, "%.f", x);
+	}
+
+
+	return dest;
+}
+
+
 circuit_t *find_dependency(vector_t *dependencies, char *name) {
 	FUNC_START();
 

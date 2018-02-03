@@ -4,9 +4,11 @@
 #include "benchmark.h"
 
 
-bool vector_push(vector_t *vec, void *item) {
-	FUNC_START();
+// NOTE: Don't add benchmarking here, because the benchmarking utility depends on these functions,
+//       and we don't like stack overflow (the error; we do like the website)
 
+
+bool vector_push(vector_t *vec, void *item) {
 	assert_not_null(vec);
 	// NOTE: Blocks vectors from containing NULL
 	assert_not_null(item);
@@ -14,7 +16,6 @@ bool vector_push(vector_t *vec, void *item) {
 	// Check for overflow
 	if (vec->amount == vec->size - 1) {
 		panic("Overflowing vector!");
-		FUNC_END();
 		return false;
 	}
 
@@ -24,29 +25,57 @@ bool vector_push(vector_t *vec, void *item) {
 	// Increase counter
 	vec->amount++;
 
-	FUNC_END();
 	return true;
 }
 
 
+void *vector_pop(vector_t *vec) {
+	assert_not_null(vec);
+
+	// Check for underflow
+	if (vec->amount == 0) {
+		return NULL;
+	}
+
+	// Get item
+	void *item = vec->items[vec->amount - 1];
+
+	// Decrease counter
+	vec->amount--;
+
+	return item;
+}
+
+
+void *vector_last(vector_t *vec) {
+	assert_not_null(vec);
+
+	// Check for underflow
+	if (vec->amount == 0) {
+		return NULL;
+	}
+
+	// Get item
+	void *item = vec->items[vec->amount - 1];
+
+	return item;
+}
+
+
 bool vector_copy(vector_t *dest, vector_t *src) {
-	FUNC_START();
 	bool success = true;
 
 	VEC_EACH(*src, void *item) {
-		FUNC_PAUSE();
+
 		success &= vector_push(dest, item);
-		FUNC_RESUME();
+
 	}
 
-	FUNC_END();
 	return success;
 }
 
 
 bool vector_remove(vector_t *vec, void *item) {
-	FUNC_START();
-
 	// Get index of item
 	size_t i = 0;
 	for (; i < vec->amount; i++) {
@@ -58,7 +87,6 @@ bool vector_remove(vector_t *vec, void *item) {
 	// Check if index is in bounds
 	if (i == vec->amount) {
 		warn("Failed to remove item from vector, since it's not in the vector");
-		FUNC_END();
 		return false;
 	}
 
@@ -70,7 +98,6 @@ bool vector_remove(vector_t *vec, void *item) {
 	// Decrease amount
 	vec->amount--;
 
-	FUNC_END();
 	return true;
 }
 
