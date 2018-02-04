@@ -1,17 +1,10 @@
 #include "benchmark.h"
 
-#include "defines.h"
 #include "assert.h"
-
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
-
-#include "vector.h"
 #include "utils.h"
 
 
-#define BENCH_STATE_SIZE 128
+#define BENCH_STATE_SIZE 1024
 static benchmark_state_t BENCH_STATE[BENCH_STATE_SIZE];
 static size_t bench_state_index = BENCH_STATE_SIZE;
 
@@ -99,9 +92,8 @@ void bench_apply_endtime(benchmark_state_t *state, struct timespec end) {
 	assert_not_null(state);
 
 
-	long double effective_duration = double_time(end) - double_time(state->effective_start);
-
-	long double actual_duration = double_time(end) - double_time(state->actual_start);
+	long effective_duration = double_time(end) - double_time(state->effective_start);
+	long actual_duration = double_time(end) - double_time(state->actual_start);
 
 	state->effective_time += effective_duration;
 	state->actual_time = actual_duration;
@@ -119,17 +111,24 @@ void bench_start_func(const char func_name[]) {
 
 	benchmark_state_t *state = bench_get_or_create_state_by_name(func_name);
 	bench_apply_starttime(state, start);
+	state->amount++;
 	vector_push(&trace, state);
 }
 
 
-void bench_end_func(void) {
+void bench_end_func(const char func_name[]) {
 	struct timespec end = {0, 0};
 	clock_gettime(CLOCK_MONOTONIC, &end);
 
 	benchmark_state_t *state = vector_pop(&trace);
+	assert_not_null(state);
+
+	if (strcmp(state->func_name, func_name) != 0) {
+		panic("Failed to end function: %s hasn't been started or %s hasn't been ended.", func_name, state->func_name);
+		return;
+	}
+
 	bench_apply_endtime(state, end);
-	state->amount++;
 
 	benchmark_state_t *last = vector_last(&trace);
 	if (last != NULL) {

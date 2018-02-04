@@ -6,8 +6,8 @@
 
 unsigned int test_all(int argc, char *argv[]) {
 	FUNC_START();
-
 	TESTS_START;
+
 
 	// If no tests specified, run some default tests
 	if (argc == 1) {

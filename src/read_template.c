@@ -69,12 +69,10 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 		g->type = type;
 
 		// Set the correct ports
-		
 		success &= gate_set_ports(g, portname, dependencies);
 
 		// Add gate to circuit
 		assert(hex_hashmap_add_item(&circ->gates, g->name, g));
-		
 	}
 
 
@@ -117,9 +115,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 		w->rightport = rightport;
 
 		// Apply wire to circuit
-		
 		success &= circuit_apply_wire(circ, w);
-		
 
 		// Free wire again
 		wire_free(w);
@@ -136,9 +132,7 @@ bool read_template(char *filename, circuit_t *circ, vector_t *dependencies) {
 	// Make sure all gates are in the right state
 	// NOTE: This will crash if a contradicting loop occurs in the program
 	//   example: NOT:I0 <---> NOT:O0
-	
 	success &= circuit_update_state(circ);
-	
 
 
 	FUNC_END();

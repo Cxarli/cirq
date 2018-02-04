@@ -63,19 +63,22 @@ void *vector_last(vector_t *vec) {
 
 
 bool vector_copy(vector_t *dest, vector_t *src) {
+	FUNC_START();
+
 	bool success = true;
 
 	VEC_EACH(*src, void *item) {
-
 		success &= vector_push(dest, item);
-
 	}
 
+	FUNC_END();
 	return success;
 }
 
 
 bool vector_remove(vector_t *vec, void *item) {
+	FUNC_START();
+
 	// Get index of item
 	size_t i = 0;
 	for (; i < vec->amount; i++) {
@@ -87,6 +90,7 @@ bool vector_remove(vector_t *vec, void *item) {
 	// Check if index is in bounds
 	if (i == vec->amount) {
 		warn("Failed to remove item from vector, since it's not in the vector");
+		FUNC_END();
 		return false;
 	}
 
@@ -98,6 +102,7 @@ bool vector_remove(vector_t *vec, void *item) {
 	// Decrease amount
 	vec->amount--;
 
+	FUNC_END();
 	return true;
 }
 
@@ -106,8 +111,6 @@ bool vector_remove(vector_t *vec, void *item) {
 void vector_init(vector_t *vec, size_t size) {
 	vec->amount = 0;
 	vec->size = size;
-
-
 	vec->items = malloc(size * sizeof(void*));
 
 	// Set all fields to zero (clear array)

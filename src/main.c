@@ -7,11 +7,19 @@
 
 
 int main(int argc, char *argv[]) {
-
 	#ifdef BENCH
 		bench_prepare();
+
+		FUNC_START();
 		atexit(bench_write_states);
 	#endif
 
-	return (int) test_all(argc, argv);
+	int failed_tests = (int) test_all(argc, argv);
+
+
+	#ifdef BENCH
+		FUNC_END();
+	#endif
+
+	return failed_tests;
 }
