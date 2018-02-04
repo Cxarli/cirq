@@ -29,7 +29,9 @@ void bench_write_states(void) {
 
 		double frac = state->effective_time / state->amount;
 
-		fprintf(outfile, "%s = %s / %i \t%s \t%s\n",
+		fprintf(outfile, "%s\t%s = %s / %i \t%s \t%s\n",
+			LEFT_PAD_SPACE(state->amount, 3),
+
 			LEFT_PAD_SPACE(frac, 8),
 			LEFT_PAD_SPACE(state->effective_time, 8),
 			state->amount,
@@ -62,10 +64,9 @@ benchmark_state_t *bench_get_or_create_state_by_name(const char func_name[]) {
 	// No state found
 	bool is_initial = bench_state_index == BENCH_STATE_SIZE;
 
-	// no existing data found, creating new one
+	// No existing data found, so create a new one
 	benchmark_state_t *state = &BENCH_STATE[is_initial ? 0 : bench_state_index];
 	benchmark_state_init(state);
-
 	state->func_name = func_name;
 
 	if (is_initial) {
@@ -104,6 +105,7 @@ void bench_start_func(const char func_name[]) {
 	struct timespec start = {0, 0};
 	clock_gettime(CLOCK_MONOTONIC, &start);
 
+	// Apply current time to previous function
 	benchmark_state_t *last = vector_last(&trace);
 	if (last != NULL) {
 		bench_apply_endtime(last, start);

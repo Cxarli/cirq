@@ -74,6 +74,13 @@ shit: CFLAGS = $(GCC_FLAGS)
 shit: asan
 
 
+release: CFLAGS = -O3 -DIGNORE_ASSERT
+release: build/release
+
+build/release: $(OUTPUT_EXEC)
+	@mv $(OUTPUT_EXEC) build/release
+
+
 # Debug + Clang + ASAN
 bench_build: CFLAGS += -DBENCH
 bench_build: cleanrun

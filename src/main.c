@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
 		atexit(bench_write_states);
 	#endif
 
+
 	int failed_tests = (int) test_all(argc, argv);
 
 

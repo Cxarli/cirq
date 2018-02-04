@@ -18,7 +18,7 @@ bool port_update_state(port_t *port) {
 		success &= gate_update_state(port->gate);
 	}
 
-	else if (port->type == PortType_OUTPUT || port->type == PortType_NODE) {
+	else { // if (port->type == PortType_OUTPUT || port->type == PortType_NODE) {
 		// Outputs and nodes should copy their state to their connected inputs and nodes
 		VEC_EACH(port->connections, port_t *connection) {
 			// Filter on inputs and nodes
