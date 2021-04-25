@@ -1,0 +1,98 @@
+{
+  "name": "full_adder",
+  "circuit": {
+    "gates": {
+      "3752723b": {
+        "type": "half_adder"
+      },
+      "45243a79": {
+        "type": "half_adder"
+      },
+      "0e36e9ea": {
+        "type": "IN"
+      },
+      "63f0d9e3": {
+        "type": "IN"
+      },
+      "b9f8820d": {
+        "type": "IN"
+      },
+      "2c9ced3a": {
+        "type": "OUT"
+      },
+      "57f26486": {
+        "type": "OUT"
+      },
+      "e16e5e97": {
+        "type": "OR"
+      }
+    },
+    "wires": [
+      {
+        "a": "0e36e9ea:I0",
+        "b": "3752723b:I1"
+      },
+      {
+        "a": "63f0d9e3:I1",
+        "b": "3752723b:I0"
+      },
+      {
+        "a": "3752723b:S",
+        "b": "45243a79:I0"
+      },
+      {
+        "a": "b9f8820d:Ci",
+        "b": "45243a79:I1"
+      },
+      {
+        "a": "45243a79:S",
+        "b": "2c9ced3a:S"
+      },
+      {
+        "a": "3752723b:C",
+        "b": "e16e5e97:I0"
+      },
+      {
+        "a": "45243a79:C",
+        "b": "e16e5e97:I1"
+      },
+      {
+        "a": "e16e5e97:O0",
+        "b": "57f26486:Co"
+      }
+    ]
+  },
+  "customGates": {
+    "XOR": {
+      "gates": {
+        "ad8a43f3": {
+          "type": "IN"
+        },
+        "401d1025": {
+          "type": "IN"
+        },
+        "8007054e": {
+          "type": "OUT"
+        }
+      },
+      "wires": []
+    },
+    "half_adder": {
+      "gates": {
+        "34901241": {
+          "type": "OUT"
+        },
+        "e2ef254d": {
+          "type": "IN"
+        },
+        "aa7e5568": {
+          "type": "IN"
+        },
+        "e209a76e": {
+          "type": "OUT"
+        }
+      },
+      "wires": []
+    }
+  }
+}

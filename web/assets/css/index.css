@@ -1,0 +1,138 @@
+html, body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+html {
+    background-color: #132a0d;
+    font-family: monospace;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    padding: 0;
+    margin: 0;
+}
+
+
+.toolbox {
+    float: left;
+
+    width: calc(15% - 2 * 20px - 4px);
+    height: calc(100% - 2 * 10px);
+
+    background-color: #000;
+    background-color: rgba(0, 0, 0, .5);
+    color: #fff;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    border-right: 4px solid #CB6D51;
+}
+
+.toolbox .box {
+    float: right;
+
+    width: calc(100% - 2 * 10px);
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    margin-bottom: 10px;
+}
+
+.toolbox .box .js-gate {
+    float: left;
+
+    margin: 10px;
+}
+
+
+.js-gate[draggable=true] {
+    cursor: move;
+}
+
+
+#circuit {
+    float: left;
+
+    width: 85%;
+    height: 100%;
+}
+
+.js-circuit {
+    width: 100%;
+    height: 100%;
+}
+
+
+.js-circuit .js-gate {
+    position: fixed;
+    width: 100px;
+    height: 100px;
+}
+
+.js-circuit .js-gate .js-port {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+}
+
+.js-circuit .js-gate .js-port[data-type=in] {
+    background-color: #fff;
+    color: #000;
+}
+
+.js-circuit .js-gate .js-port[data-type=out] {
+    background-color: #000;
+    color: #fff;
+}
+
+.js-circuit .js-wire {
+    width: 0;
+    position: fixed;
+
+    background-color: #CB6D51;
+    border-left: 2px solid #CB6D51;
+    border-right: 2px solid #CB6D51;
+}
+
+
+.js-gate {
+    width: 50px;
+    height: 50px;
+}
+
+.js-gate[data-type=and] {
+    background-color: #500;
+}
+
+.js-gate[data-type=or] {
+    background-color: #005;
+}
+
+.js-gate[data-type=xor] {
+    background-color: #055;
+}
+
+.js-gate[data-type=not] {
+    background-color: #505;
+}
+
+.js-gate[data-type=in] {
+    color: #000;
+    background-color: #fff;
+}
+
+.js-gate[data-type=out] {
+    color: #fff;
+    background-color: #000;
+}

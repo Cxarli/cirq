@@ -1,0 +1,30 @@
+{
+ "circuit": {
+  "gates": {
+   "6eccf69a": {
+    "type": "NOT"
+   },
+   "5cdb9515": {
+    "type": "IN"
+   },
+   "18c1d48d": {
+    "type": "OUT"
+   }
+  },
+  "wires": [
+   {
+    "a": "6eccf69a:I0",
+    "b": "6eccf69a:O1"
+   },
+   {
+    "a": "5cdb9515:O0",
+    "b": "6eccf69a:I0"
+   },
+   {
+    "a": "6eccf69a:O1",
+    "b": "18c1d48d:I0"
+   }
+  ]
+ },
+ "customGates": {}
+}
