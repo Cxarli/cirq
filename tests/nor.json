@@ -1,0 +1,40 @@
+{
+ "circuit": {
+  "gates": {
+   "832532c7": {
+    "type": "IN"
+   },
+   "a0e3e448": {
+    "type": "OR"
+   },
+   "1c774a1e": {
+    "type": "NOT"
+   },
+   "26cbc7d3": {
+    "type": "OUT"
+   },
+   "eb2ff896": {
+    "type": "IN"
+   }
+  },
+  "wires": [
+   {
+    "a": "832532c7:O0",
+    "b": "a0e3e448:I0"
+   },
+   {
+    "a": "eb2ff896:O0",
+    "b": "a0e3e448:I1"
+   },
+   {
+    "a": "a0e3e448:O2",
+    "b": "1c774a1e:I0"
+   },
+   {
+    "a": "1c774a1e:O1",
+    "b": "26cbc7d3:I0"
+   }
+  ]
+ },
+ "customGates": {}
+}
